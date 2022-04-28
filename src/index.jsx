@@ -5,7 +5,7 @@ import GlobalStyle from './styles/GlobalStyles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Posts from './pages/Posts'
 import Header from './components/Header'
-
+import Profile from './pages/Profile'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
@@ -17,6 +17,7 @@ root.render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

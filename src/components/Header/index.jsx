@@ -9,7 +9,7 @@ function Header() {
       </div>
       <nav>
         <StyledLink to="/posts">Accueil </StyledLink>
-        <StyledLink to="/profil">Mon profil </StyledLink>
+        <StyledLink to="/profile">Mon profil </StyledLink>
         <StyledLink to="/">Se deconnecter </StyledLink>
       </nav>
     </HeaderWrapper>
