@@ -1,30 +1,70 @@
+import {
+  isAlphanumeric,
+  isEmail,
+  isNotEmpty,
+  matches,
+  maxLength,
+  minLength,
+} from 'class-validator'
 import { useEffect, useState } from 'react'
 import { useFetch } from '../../hooks/custom.hooks'
 
-function SignUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+const SignUp = () => {
+  const [credentials, setCredentials] = useState({
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  })
+
+  const [error, setError] = useState()
   const [data, setData] = useState('')
 
-  function matchPassword() {
-    password !== confirmPassword
-      ? setError('Les mots de passe ne correspondent pas')
-      : setError('')
+  const handleValues = (e) => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  function checkCredentials(credentials) {
+    if (credentials.password !== credentials.passwordConfirm) {
+      setError('Les mots de passe ne correspondent pas')
+      return false
+    }
+    if (!isEmail(credentials.email)) {
+      setError('Email invalide')
+      return false
+    }
+    if (
+      !isNotEmpty(credentials.username) ||
+      !isAlphanumeric(credentials.username) ||
+      !minLength(credentials.username, 3) ||
+      !maxLength(credentials.username, 20)
+    ) {
+      setError("Le nom d'utilisateur est invalide")
+      return false
+    }
+    if (
+      !matches(
+        credentials.password,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[.;,:_-])[A-Za-z0-9.;,:_-]{8,30}$/
+      )
+    ) {
+      setError(
+        'Mot de passe invalide ! Doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (.-,)'
+      )
+      return false
+    }
+    setError('')
+    return true
   }
 
   async function submit(e) {
     e.preventDefault()
-    const body = {
-      username,
-      email,
-      password,
-    }
-    fetchData('auth/signup', 'POST', body)
-
-    console.log(data)
+    //checkCredentials(credentials)
+    const data = await fetchData('auth/signup', 'POST', credentials)
+    console.log(error)
   }
 
   async function fetchData(uri, method = 'GET', body = '') {
@@ -37,58 +77,32 @@ function SignUp() {
         body: JSON.stringify(body),
       })
       const data = await response.json()
+      if (response.status > 300) {
+        setError(data.message)
+      }
       setData(data)
     } catch (error) {
-      setError(error)
+      setError(error.message)
       console.log(error)
     }
   }
 
   return (
     <div>
-      <form onSubmit={(e) => submit(e)} action="">
+      <form onSubmit={submit} action="">
         {/* username */}
         <label htmlFor="username">Nom d'utilisateur</label>
-        <input
-          onChange={(e) => {
-            setUsername(e.target.value)
-          }}
-          name="username"
-          type="text"
-          placeholder="Nom d'utilisateur"
-        />
-        {/* username */}
+        <input onChange={handleValues} name="username" type="text" />
+        {/* email */}
         <label htmlFor="email">Email</label>
-        <input
-          onChange={(e) => {
-            setEmail(e.target.value)
-          }}
-          name="email"
-          type="email"
-          placeholder="Email"
-        />
-        {/* username */}
+        <input onChange={handleValues} name="email" type="email" />
+        {/* password */}
         <label htmlFor="password">Mot de passe</label>
-        <input
-          onChange={(e) => {
-            setPassword(e.target.value)
-          }}
-          name="password"
-          type="password"
-          placeholder="Mot de passe"
-        />
-        {/* username */}
-        {error ?? <span>{error}</span>}
+        <input onChange={handleValues} name="password" type="password" />
+        {/* confirm password */}
+        {error && <span>{error}</span>}
         <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-        <input
-          onBlur={(e) => {
-            setConfirmPassword(e.target.value)
-            matchPassword()
-          }}
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirmer le mot de passe"
-        />
+        <input onChange={handleValues} name="passwordConfirm" type="password" />
         <button type="submit">S'inscrire</button>
       </form>
     </div>
