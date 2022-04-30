@@ -12,8 +12,12 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material'
+import { useContext } from 'react'
+import { UserContext } from '../../utils/context/context'
 
-function Home({ setUser, user }) {
+function Home() {
+  const { user, setUser } = useContext(UserContext)
+
   //used to display sign up or login form
   const [hasAccount, setHasAccount] = useState(false)
 
@@ -83,11 +87,7 @@ function Home({ setUser, user }) {
               <ToggleButton value={true}>Se connecter</ToggleButton>
             </ToggleButtonGroup>
 
-            {hasAccount ? (
-              <Login setUser={setUser} />
-            ) : (
-              <SignUp setUser={setUser} />
-            )}
+            {hasAccount ? <Login /> : <SignUp />}
           </Box>
         </Box>
       </Grid>

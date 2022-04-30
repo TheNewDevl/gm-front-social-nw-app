@@ -1,10 +1,13 @@
 import { HeaderWrapper, StyledLink, Logo } from './header.style'
 import LogoPng from '../../assets/icon.png'
-import { AppBar, Tabs, TabScrollButton, Tab, Box } from '@mui/material'
-import { Navigation } from '@mui/icons-material'
+import { AppBar, Tabs, Tab, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { UserContext } from '../../utils/context/context'
 
-function Header({ setUser }) {
+function Header() {
+  const { user, setUser } = useContext(UserContext)
+
   return (
     <AppBar position="sticky">
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

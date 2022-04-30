@@ -9,8 +9,12 @@ import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
 import validateCredentials from '../../../utils/validators'
+import { useContext } from 'react'
+import { UserContext } from '../../../utils/context/context'
 
-function Login({ setUser }) {
+function Login() {
+  const { user, setUser } = useContext(UserContext)
+
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',

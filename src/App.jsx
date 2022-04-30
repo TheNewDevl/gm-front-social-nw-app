@@ -8,12 +8,11 @@ import { CssBaseline } from '@mui/material'
 import ProtectedRoute from './auth/ProtectedRoute'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { blue } from '@mui/material/colors'
+import { useContext } from 'react'
+import { UserContext } from './utils/context/context'
 
 function App() {
-  //Will contain user data from API
-  const [user, setUser] = useState(null)
-  console.log(user)
-
+  const { user, setUser } = useContext(UserContext)
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
   useEffect(() => {
     let local = sessionStorage.getItem('user')
@@ -33,10 +32,7 @@ function App() {
         <GlobalStyle />
 
         <Routes>
-          <Route
-            path="/"
-            element={<AuthPage setUser={setUser} user={user} />}
-          />
+          <Route path="/" element={<AuthPage />} />
           <Route element={<ProtectedRoute user={user} />}>
             <Route path="/home" element={<Home setUser={setUser} />} />
             <Route path="/profile" element={<Profile setUser={setUser} />} />
