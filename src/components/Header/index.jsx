@@ -11,13 +11,16 @@ function Header({ setUser }) {
         <Logo src={LogoPng} alt="Logo" />
 
         <Tabs value={false}>
-          <Tab component={Link} to="/posts" label="Accueil" />
+          <Tab component={Link} to="/home" label="Accueil" />
           <Tab component={Link} to="/profile" label="Mon profil" />
           <Tab
             component={Link}
             to="/"
             label="Se deconnecter"
-            onClick={() => setUser(null)}
+            onClick={() => {
+              setUser(null)
+              sessionStorage.clear()
+            }}
           />
         </Tabs>
       </Box>

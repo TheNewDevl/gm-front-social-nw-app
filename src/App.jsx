@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AuthPage from './pages/AuthPage/AuthPage'
 import GlobalStyle from './styles/GlobalStyles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -13,6 +13,12 @@ function App() {
   //Will contain user data from API
   const [user, setUser] = useState(null)
   console.log(user)
+
+  //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
+  useEffect(() => {
+    let local = sessionStorage.getItem('user')
+    if (local && local.includes('token')) setUser(JSON.parse(local))
+  }, [])
 
   const theme = createTheme({
     palette: {

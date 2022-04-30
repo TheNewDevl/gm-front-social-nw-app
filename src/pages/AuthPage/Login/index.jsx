@@ -10,9 +10,6 @@ import Box from '@mui/material/Box'
 
 import validateCredentials from '../../../utils/validators'
 
-//test
-import FetchData from '../../../auth/AuthFetch'
-
 function Login({ setUser }) {
   const [credentials, setCredentials] = useState({
     username: '',
@@ -36,7 +33,31 @@ function Login({ setUser }) {
     const validationError = validateCredentials(credentials)
     setError(validationError)
 
-    if (!error) FetchData('auth/login', 'POST', credentials)
+    if (!error) fetchData('auth/login', 'POST', credentials)
+  }
+
+  async function fetchData(uri, method = 'GET', body = '') {
+    try {
+      const response = await fetch(`http://localhost:3000/${uri}`, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      const data = await response.json()
+      if (response.status >= 400) {
+        setError(data.message)
+      } else {
+        setData(data)
+        setUser(data)
+        sessionStorage.setItem('user', JSON.stringify(data))
+      }
+      return data
+    } catch (error) {
+      setError(error.message)
+      console.log(error)
+    }
   }
 
   return (

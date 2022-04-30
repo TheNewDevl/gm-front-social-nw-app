@@ -18,7 +18,7 @@ function Home({ setUser, user }) {
   const [hasAccount, setHasAccount] = useState(false)
 
   // if an user is set, redirect to the posts page
-  if (user) return <Navigate to="/posts" replace />
+  if (user) return <Navigate to="/home" replace />
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
