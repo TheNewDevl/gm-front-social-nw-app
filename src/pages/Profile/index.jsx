@@ -1,7 +1,7 @@
 import Profile from '../../components/Profile'
 import Posts from '../../components/Posts'
 import Comments from '../../components/Comments'
-
+import Header from '../../components/Header'
 const profile = {
   avatar: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
   username: 'johndoe',
@@ -38,6 +38,7 @@ const profile = {
 function Account() {
   return (
     <main>
+      <Header />
       {/*  <MainTitle>Mon Profil</MainTitle> */}
       <Profile profile={profile} />
       <Posts profile={profile} />

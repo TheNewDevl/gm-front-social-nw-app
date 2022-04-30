@@ -4,7 +4,6 @@ const GlobalStyle = createGlobalStyle`
     * {
         font-family: 'Trebuchet MS', Helvetica, sans-serif;
         box-sizing: border-box;
-        color: #fff
     }
  
     body {
