@@ -9,6 +9,7 @@ import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
+import { CircularProgress } from '@mui/material'
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -18,7 +19,7 @@ function Login() {
   const [formErrors] = useState({})
   const [readyToSubmit, setReadyToSubmit] = useState(false)
 
-  const { error } = usePostRequest(
+  const { error, isLoading } = usePostRequest(
     'auth/login',
     credentials,
     readyToSubmit,
@@ -73,8 +74,9 @@ function Login() {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isLoading ? true : false}
         >
-          Se connecter
+          {isLoading ? <CircularProgress size={'1.7em'} /> : 'Se connecter'}
         </Button>
       </Box>
     </>

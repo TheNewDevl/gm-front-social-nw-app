@@ -9,6 +9,7 @@ import Box from '@mui/material/Box'
 import { inputs } from './inputs'
 import validateCredentials from '../../../utils/validators'
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
+import { CircularProgress } from '@mui/material'
 
 const SignUp = () => {
   const [formErrors, setFormErrors] = useState({})
@@ -20,7 +21,7 @@ const SignUp = () => {
   })
   const [readyToSubmit, setReadyToSubmit] = useState(false)
 
-  const { error } = usePostRequest(
+  const { error, isLoading } = usePostRequest(
     'auth/signup',
     credentials,
     readyToSubmit,
@@ -88,8 +89,9 @@ const SignUp = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isLoading ? true : false}
         >
-          S'inscrire
+          {isLoading ? <CircularProgress size={'1.7em'} /> : "S'inscrire"}
         </Button>
       </Box>
     </>
