@@ -12,26 +12,38 @@ import validateCredentials from '../../../utils/validators'
 import { useContext } from 'react'
 import { UserContext } from '../../../utils/context/context'
 
+import setDataFetch from '../../../utils/api/fetchApi'
+
+import { usePostRequest } from '../../../utils/hooks/custom.hooks'
+
 const SignUp = () => {
   const { user, setUser } = useContext(UserContext)
+
+  const [formErrors, setFormErrors] = useState({})
   const [credentials, setCredentials] = useState({
     username: '',
     email: '',
     password: '',
     passwordConfirm: '',
   })
-  const [data, setData] = useState('')
-  const [error, setError] = useState()
+  const [readyToSubmit, setReadyToSubmit] = useState(false)
+
+  const { data, error } = usePostRequest(
+    'auth/signup',
+    credentials,
+    readyToSubmit,
+    formErrors
+  )
 
   // When succcessful signup, run login and set user data returned by API
   useEffect(() => {
     async function autoLogin() {
       if (data && data.message === 'Utilisateur créé avec succes') {
-        const user = await fetchData('auth/login', 'POST', {
+        const { responseData } = await setDataFetch('auth/login', 'POST', {
           username: credentials.username,
           password: credentials.password,
         })
-        setUser(user)
+        setUser(responseData)
         setCredentials('')
       }
     }
@@ -46,57 +58,48 @@ const SignUp = () => {
     })
   }
 
-  /** Check the the input values validity and make a POST request if no errors */
-  async function handleSubmit(e) {
+  /** Check the the input values validity, set formerror and submit state */
+  const handleSubmit = (e) => {
     e.preventDefault()
+    const errors = validateCredentials(credentials)
+    setFormErrors(errors)
+    setReadyToSubmit(true)
 
-    const validationError = validateCredentials(credentials)
-    setError(validationError)
-
-    //API will reject this value
-    delete credentials.passwordConfirm
-    if (!error) fetchData('auth/signup', 'POST', credentials)
-  }
-
-  async function fetchData(uri, method = 'GET', body = '') {
-    try {
-      const response = await fetch(`http://localhost:3000/${uri}`, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-      const data = await response.json()
-      if (response.status >= 400) {
-        setError(data.message)
-      }
-      setData(data)
-      return data
-    } catch (error) {
-      setError(error.message)
-      console.log(error)
-    }
+    setTimeout(() => {
+      setReadyToSubmit(false)
+    }, 1000)
   }
 
   return (
     <>
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box noValidate component="form" onSubmit={handleSubmit}>
         {inputs.map((input, index) => (
-          <TextField
-            key={index}
-            variant="standard"
-            margin="normal"
-            required
-            fullWidth
-            autoFocus={input.autofocus ? true : false}
-            id={input.name}
-            label={input.label}
-            name={input.name}
-            type={input.type}
-            autoComplete="off"
-            onChange={handleValues}
-          />
+          <>
+            <TextField
+              key={index}
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              autoFocus={input.autofocus ? true : false}
+              id={input.name}
+              label={input.label}
+              name={input.name}
+              type={input.type}
+              autoComplete="off"
+              value={credentials[input.name]}
+              onChange={handleValues}
+              error={formErrors[input.name] ? true : false}
+            />
+            <Typography
+              key={`${index}-${input.name}`}
+              component="span"
+              variant="body2"
+              color="error.light"
+            >
+              {formErrors[input.name]}
+            </Typography>
+          </>
         ))}
         {error && (
           <Typography component="span" variant="body1" color="error.light">

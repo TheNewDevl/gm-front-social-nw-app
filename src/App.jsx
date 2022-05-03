@@ -19,6 +19,11 @@ function App() {
     if (local && local.includes('token')) setUser(JSON.parse(local))
   }, [])
 
+  //Save user information in local storage
+  useEffect(() => {
+    user && sessionStorage.setItem('user', JSON.stringify(user))
+  }, [user])
+
   const theme = createTheme({
     palette: {
       primary: blue,
@@ -35,7 +40,7 @@ function App() {
           <Route path="/" element={<AuthPage />} />
           <Route element={<ProtectedRoute user={user} />}>
             <Route path="/home" element={<Home setUser={setUser} />} />
-            <Route path="/profile" element={<Profile setUser={setUser} />} />
+            <Route path="/profile/" element={<Profile setUser={setUser} />} />
           </Route>
         </Routes>
       </BrowserRouter>

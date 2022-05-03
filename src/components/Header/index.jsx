@@ -16,6 +16,10 @@ function Header() {
         <Tabs value={false}>
           <Tab component={Link} to="/home" label="Accueil" />
           <Tab component={Link} to="/profile" label="Mon profil" />
+          {/* Display dashboard link for admin users */}
+          {user.role === 'admin' && (
+            <Tab component={Link} to="/dashboard" label="Dashboard" />
+          )}
           <Tab
             component={Link}
             to="/"

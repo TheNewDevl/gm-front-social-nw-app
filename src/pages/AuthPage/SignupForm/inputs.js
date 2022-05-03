@@ -18,6 +18,7 @@ export const inputs = [
     type: 'password',
     required: true,
   },
+
   {
     name: 'passwordConfirm',
     label: 'Confirmation du mot de passe',

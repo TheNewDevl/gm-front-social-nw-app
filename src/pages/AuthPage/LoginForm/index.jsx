@@ -1,26 +1,29 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import { inputs } from '../Login/inputs'
+import { inputs } from './inputs'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import validateCredentials from '../../../utils/validators'
-import { useContext } from 'react'
-import { UserContext } from '../../../utils/context/context'
+import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 
 function Login() {
-  const { user, setUser } = useContext(UserContext)
-
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   })
-  const [data, setData] = useState('')
-  const [error, setError] = useState()
+  const [formErrors] = useState({})
+  const [readyToSubmit, setReadyToSubmit] = useState(false)
+
+  const { error } = usePostRequest(
+    'auth/login',
+    credentials,
+    readyToSubmit,
+    formErrors
+  )
 
   //set input values to credentials state
   const handleValues = (e) => {
@@ -30,38 +33,14 @@ function Login() {
     })
   }
 
-  /** Check the the input values validity and make a POST request if no errors */
-  async function handleSubmit(e) {
+  /** Check the the input values validity, set formerror and submit state */
+  const handleSubmit = (e) => {
     e.preventDefault()
-
-    const validationError = validateCredentials(credentials)
-    setError(validationError)
-
-    if (!error) fetchData('auth/login', 'POST', credentials)
-  }
-
-  async function fetchData(uri, method = 'GET', body = '') {
-    try {
-      const response = await fetch(`http://localhost:3000/${uri}`, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-      const data = await response.json()
-      if (response.status >= 400) {
-        setError(data.message)
-      } else {
-        setData(data)
-        setUser(data)
-        sessionStorage.setItem('user', JSON.stringify(data))
-      }
-      return data
-    } catch (error) {
-      setError(error.message)
-      console.log(error)
-    }
+    setReadyToSubmit(true)
+    //Setting this value to false again will let we use the useRequest
+    setTimeout(() => {
+      setReadyToSubmit(false)
+    }, 1000)
   }
 
   return (
@@ -79,6 +58,7 @@ function Login() {
             label={input.label}
             name={input.name}
             type={input.type}
+            value={credentials[input.name]}
             autoComplete="off"
             onChange={handleValues}
           />
