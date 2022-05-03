@@ -1,22 +1,16 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
-
-import { inputs } from './inputs'
+import { useState } from 'react'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
+import { inputs } from './inputs'
 import validateCredentials from '../../../utils/validators'
-import { useContext } from 'react'
-import { UserContext } from '../../../utils/context/context'
-
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 
 const SignUp = () => {
-  const { user, setUser } = useContext(UserContext)
-
   const [formErrors, setFormErrors] = useState({})
   const [credentials, setCredentials] = useState({
     username: '',

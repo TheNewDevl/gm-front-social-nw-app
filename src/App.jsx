@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import AuthPage from './pages/AuthPage/AuthPage'
 import GlobalStyle from './styles/GlobalStyles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
