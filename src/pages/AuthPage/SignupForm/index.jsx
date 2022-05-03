@@ -12,8 +12,6 @@ import validateCredentials from '../../../utils/validators'
 import { useContext } from 'react'
 import { UserContext } from '../../../utils/context/context'
 
-import setDataFetch from '../../../utils/api/fetchApi'
-
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 
 const SignUp = () => {
@@ -28,27 +26,12 @@ const SignUp = () => {
   })
   const [readyToSubmit, setReadyToSubmit] = useState(false)
 
-  const { data, error } = usePostRequest(
+  const { error } = usePostRequest(
     'auth/signup',
     credentials,
     readyToSubmit,
     formErrors
   )
-
-  // When succcessful signup, run login and set user data returned by API
-  useEffect(() => {
-    async function autoLogin() {
-      if (data && data.message === 'Utilisateur créé avec succes') {
-        const { responseData } = await setDataFetch('auth/login', 'POST', {
-          username: credentials.username,
-          password: credentials.password,
-        })
-        setUser(responseData)
-        setCredentials('')
-      }
-    }
-    autoLogin()
-  }, [data])
 
   //set input values to credentials state
   const handleValues = (e) => {
