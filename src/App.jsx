@@ -38,9 +38,9 @@ function App() {
 
         <Routes>
           <Route path="/" element={<AuthPage />} />
-          <Route element={<ProtectedRoute user={user} />}>
-            <Route path="/home" element={<Home setUser={setUser} />} />
-            <Route path="/profile/" element={<Profile setUser={setUser} />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/profile/" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

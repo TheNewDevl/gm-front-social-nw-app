@@ -9,7 +9,7 @@ const GlobalStyle = createGlobalStyle`
     body {
         margin: 0;
         padding:0;
-        background-color: ${colors.primary};
+    
     }
 `
 export default GlobalStyle

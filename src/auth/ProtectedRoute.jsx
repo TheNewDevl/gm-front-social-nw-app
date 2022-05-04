@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { UserContext } from '../utils/context/context'
 
 function ProtectedRoute() {
-  const { user, setUser } = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
-  if (!user) {
+  if (!user && !user.includes('token')) {
     return <Navigate to="/" replace />
   }
   return <Outlet />
