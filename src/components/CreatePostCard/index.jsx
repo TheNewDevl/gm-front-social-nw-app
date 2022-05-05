@@ -15,10 +15,10 @@ import { Input } from '@mui/material'
 import { IconButton } from '@mui/material'
 import { PhotoCamera } from '@mui/icons-material'
 
-function PostCard() {
+function CreatePostCard() {
   const { user } = useContext(UserContext)
   const [text, setText] = useState('')
-  const [file, setFile] = useState('')
+  const [file, setFile] = useState()
 
   //handleChanges
   const handleText = (e) => {
@@ -35,14 +35,13 @@ function PostCard() {
       data.append('file', file)
       data.append('text', JSON.stringify(text))
 
-      const response = await fetch('http://localhost:3000/posts/upload', {
+      const response = await fetch('http://localhost:3000/api/posts/upload', {
         method: 'POST',
         body: data,
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${user.user.token}`,
         },
       })
-      console.log(response)
       const parsedRespose = await response.json()
       console.log(parsedRespose)
     } catch (error) {
@@ -51,28 +50,35 @@ function PostCard() {
   }
 
   return (
-    <Card sx={{ minWidth: 300 }}>
-      <CardContent>
-        <Typography variant="h6" component="h2" gutterBottom>
-          Publiez du contenu
-        </Typography>
-
-        <TextField fullWidth></TextField>
-      </CardContent>
-      <CardActions>
-        <Button variant="outlined" size="medium">
-          Partager
-        </Button>
-        <label htmlFor="outlined-button-file">
-          <Button variant="outlined" component="span">
-            Upload
-            <PhotoCamera />
-          </Button>
-          <Input accept="image/*" id="contained-button-file" type="file" />
+    <div className=" rounded-lg p-10 shadow-lg hover:shadow-xl">
+      <form onSubmit={handleSubmit}>
+        <label onChange={handleText} htmlFor="text">
+          <input
+            className="placeholder:italic placeholder:text-slate-400"
+            placeholder="Ecrivez quelque chose"
+            name="text"
+            type="text"
+            value={text}
+          />
         </label>
-      </CardActions>
-    </Card>
+
+        <label onChange={handleFile} htmlFor="file">
+          <input
+            className="block w-full text-sm text-slate-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-full file:border-0
+      file:text-sm file:font-semibold
+      file:bg-violet-50 file:text-violet-700
+      hover:file:bg-violet-100"
+            type="file"
+            name="file"
+          />
+        </label>
+
+        <button type="submit">Partager</button>
+      </form>
+    </div>
   )
 }
 
-export default PostCard
+export default CreatePostCard

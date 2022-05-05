@@ -4,21 +4,27 @@ import { useContext } from 'react'
 import { UserContext } from '../context/context'
 
 /** Used for post sign up and login post requests */
-export function usePostRequest(uri, credentials, readyToSubmit, formErrors) {
-  const { setUser } = useContext(UserContext)
+export function usePostRequest(
+  uri,
+  credentials,
+  readyToSubmit,
+  formErrors,
+  token = null
+) {
+  const { user, setUser, hasProfile, setHasProfile } = useContext(UserContext)
 
   const [data, setData] = useState(null)
   const [isLoading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  console.log(readyToSubmit)
 
   async function makeRequest() {
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:3000/${uri}`, {
+      const response = await fetch(`http://localhost:3000/api/${uri}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(credentials),
       })
@@ -26,11 +32,18 @@ export function usePostRequest(uri, credentials, readyToSubmit, formErrors) {
       if (response.status >= 400) {
         setError(dataApi.message)
       }
+      console.log(dataApi.message)
+
       if (
         response.status === 201 &&
         dataApi.message === 'Identification réussie'
       ) {
         setUser(dataApi)
+      }
+      if (dataApi.message === 'Profil sauvegardé') {
+        setHasProfile('1')
+        sessionStorage.setItem('hasProfile', '1')
+        console.log(hasProfile)
       }
       setData(dataApi)
       if (dataApi.hasOwnProperty('token')) setUser(dataApi)
@@ -57,4 +70,40 @@ export function usePostRequest(uri, credentials, readyToSubmit, formErrors) {
   }, [data])
 
   return { data, error, isLoading }
+}
+
+//used to all get requests
+export function useFetch(uri) {
+  //init states for data, loader and errors
+  const [data, setData] = useState()
+  const [isLoading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  const local = JSON.parse(sessionStorage.getItem('user'))
+  const token = local.user.token
+
+  useEffect(() => {
+    if (!uri) throw new Error('You must specify an url')
+    setLoading(true)
+
+    async function fetchData() {
+      try {
+        const response = await fetch(`http://localhost:3000/api/${uri}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const data = await response.json()
+        setData(data)
+      } catch (error) {
+        console.log(error)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [uri])
+
+  return { isLoading, data, error }
 }

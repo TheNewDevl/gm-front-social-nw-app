@@ -12,11 +12,16 @@ import { useContext } from 'react'
 import { UserContext } from './utils/context/context'
 
 function App() {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser, hasProfile, setHasProfile } = useContext(UserContext)
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
+  console.log(hasProfile)
   useEffect(() => {
-    let local = sessionStorage.getItem('user')
+    const local = sessionStorage.getItem('user')
     if (local && local.includes('token')) setUser(JSON.parse(local))
+
+    console.log()
+    const profile = sessionStorage.getItem('hasProfile')
+    profile && setHasProfile(profile)
   }, [])
 
   //Save user information in local storage

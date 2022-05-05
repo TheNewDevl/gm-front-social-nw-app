@@ -14,15 +14,16 @@ import {
 } from '@mui/material'
 import { useContext } from 'react'
 import { UserContext } from '../../utils/context/context'
+import ProfileForm from './ProfileForm/ProfileForm'
 
 function Home() {
-  const { user, setUser } = useContext(UserContext)
-
+  const { user, hasProfile } = useContext(UserContext)
   //used to display sign up or login form
   const [hasAccount, setHasAccount] = useState(false)
 
   // if an user is set, redirect to the posts page
-  if (user) return <Navigate to="/home" replace />
+  if (user && (user.user.hasProfile === 1 || hasProfile === '1'))
+    return <Navigate to="/home" replace />
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -74,20 +75,23 @@ function Home() {
               borderTopRightRadius: '200px',
             }}
           >
-            <ToggleButtonGroup
-              color="primary"
-              fullWidth
-              value={hasAccount}
-              exclusive
-              onChange={() => setHasAccount(!hasAccount)}
-            >
-              <ToggleButton size="large" value={false}>
-                S'inscrire
-              </ToggleButton>
-              <ToggleButton value={true}>Se connecter</ToggleButton>
-            </ToggleButtonGroup>
-
-            {hasAccount ? <Login /> : <SignUp />}
+            {!user && (
+              <ToggleButtonGroup
+                color="primary"
+                fullWidth
+                value={hasAccount}
+                exclusive
+                onChange={() => setHasAccount(!hasAccount)}
+              >
+                <ToggleButton size="large" value={false}>
+                  S'inscrire
+                </ToggleButton>
+                <ToggleButton value={true}>Se connecter</ToggleButton>
+              </ToggleButtonGroup>
+            )}
+            {!user && hasAccount && <Login />}
+            {!user && !hasAccount && <SignUp />}
+            {user && user.user.hasProfile === 0 && <ProfileForm />}
           </Box>
         </Box>
       </Grid>

@@ -1,6 +1,7 @@
 import Header from '../../components/Header'
 import { Grid } from '@mui/material'
-import PostCards from '../../components/PostCards'
+import CreatePost from '../../components/CreatePostCard'
+import PostCard from '../../components/PostCard'
 function Home() {
   return (
     <>
@@ -8,9 +9,9 @@ function Home() {
       <h1> réseau !</h1>
 
       <Grid container>
-        <Grid item xs={4} sm={4} md={3}></Grid>
-        <Grid item xs={12} sm={8} md={9}>
-          <PostCards />
+        <Grid item xs={12} sm={8} md={6}>
+          <CreatePost />
+          <PostCard />
         </Grid>
       </Grid>
     </>
