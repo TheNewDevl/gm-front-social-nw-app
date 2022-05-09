@@ -52,8 +52,9 @@ function CreatePostCard() {
   return (
     <div className=" rounded-lg p-10 shadow-lg hover:shadow-xl">
       <form onSubmit={handleSubmit}>
-        <label onChange={handleText} htmlFor="text">
+        <label htmlFor="text">
           <input
+            onChange={handleText}
             className="placeholder:italic placeholder:text-slate-400"
             placeholder="Ecrivez quelque chose"
             name="text"
@@ -62,8 +63,9 @@ function CreatePostCard() {
           />
         </label>
 
-        <label onChange={handleFile} htmlFor="file">
+        <label htmlFor="file">
           <input
+            onChange={handleFile}
             className="block w-full text-sm text-slate-500
       file:mr-4 file:py-2 file:px-4
       file:rounded-full file:border-0

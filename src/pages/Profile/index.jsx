@@ -1,7 +1,6 @@
 import AccountCard from './AccountCard'
 import Posts from '../../components/Posts'
 import Comments from '../../components/Comments/index'
-import Header from '../../components/Header'
 
 const profile = {
   avatar: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
@@ -39,9 +38,8 @@ const profile = {
 function Account() {
   return (
     <main>
-      <Header />
       {/*  <MainTitle>Mon Profil</MainTitle> */}
-      <AccountCard profile={profile} />
+      <AccountCard />
       <Posts profile={profile} />
       <Comments profile={profile} />
     </main>

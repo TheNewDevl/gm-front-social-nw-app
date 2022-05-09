@@ -52,9 +52,8 @@ const SignUp = () => {
     <>
       <Box noValidate component="form" onSubmit={handleSubmit}>
         {inputs.map((input, index) => (
-          <>
+          <React.Fragment key={index}>
             <TextField
-              key={index}
               variant="standard"
               margin="normal"
               required
@@ -77,7 +76,7 @@ const SignUp = () => {
             >
               {formErrors[input.name]}
             </Typography>
-          </>
+          </React.Fragment>
         ))}
         {error && (
           <Typography component="span" variant="body1" color="error.light">

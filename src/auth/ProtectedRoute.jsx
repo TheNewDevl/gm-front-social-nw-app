@@ -6,7 +6,7 @@ function ProtectedRoute() {
   const { user } = useContext(UserContext)
 
   if (!user && !user.includes('token')) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/auth" replace />
   }
   return <Outlet />
 }

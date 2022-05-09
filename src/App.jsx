@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import AuthPage from './pages/AuthPage/AuthPage'
-import GlobalStyle from './styles/GlobalStyles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
@@ -10,16 +9,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { blue } from '@mui/material/colors'
 import { useContext } from 'react'
 import { UserContext } from './utils/context/context'
+import Header from './components/Header/Header'
+import './App.scss'
 
 function App() {
-  const { user, setUser, hasProfile, setHasProfile } = useContext(UserContext)
+  const { user, setUser, setHasProfile } = useContext(UserContext)
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
-  console.log(hasProfile)
   useEffect(() => {
     const local = sessionStorage.getItem('user')
     if (local && local.includes('token')) setUser(JSON.parse(local))
 
-    console.log()
     const profile = sessionStorage.getItem('hasProfile')
     profile && setHasProfile(profile)
   }, [])
@@ -39,12 +38,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <CssBaseline />
-        <GlobalStyle />
-
+        <Header />
         <Routes>
-          <Route path="/" element={<AuthPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/profile/" element={<Profile />} />
           </Route>
         </Routes>

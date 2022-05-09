@@ -1,35 +1,23 @@
 import * as React from 'react'
 import { useState } from 'react'
-import { inputs } from './inputs'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { TextareaAutosize, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
 import { useContext } from 'react'
 import { UserContext } from '../../../utils/context/context'
 
 function ProfileForm() {
   const [profileInputs, setprofileInputs] = useState({})
+  const [file, setFile] = useState()
+  const [error, setError] = useState()
+  const [isLoading, setLoading] = useState(false)
+
   const [formErrors] = useState({})
-  const [readyToSubmit, setReadyToSubmit] = useState(false)
-  const { user } = useContext(UserContext)
-
-  let token = ''
-  if (user) {
-    token = user.user.token
-  }
-
-  const { error, isLoading } = usePostRequest(
-    'profile',
-    profileInputs,
-    readyToSubmit,
-    formErrors,
-    token
-  )
+  const { user, setHasProfile } = useContext(UserContext)
 
   //set input values to credentials state
   const handleValues = (e) => {
@@ -39,14 +27,40 @@ function ProfileForm() {
     })
   }
 
-  /** Check the the input values validity, set formerror and submit state */
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setReadyToSubmit(true)
-    //Setting this value to false again will let we use the useRequest
-    setTimeout(() => {
-      setReadyToSubmit(false)
-    }, 1000)
+  const handleFile = (e) => {
+    setFile(e.target.files[0])
+  }
+
+  const handleSubmit = async (e) => {
+    setLoading(true)
+    try {
+      e.preventDefault()
+      const data = new FormData()
+      //append file only if file exists (back requirement)
+      file && data.append('file', file)
+      data.append('firstName', profileInputs)
+      data.append('lastName', profileInputs)
+      data.append('bio', profileInputs)
+
+      const response = await fetch('http://localhost:3000/api/profile/', {
+        method: 'POST',
+        body: data,
+        headers: {
+          Authorization: `Bearer ${user.user.token}`,
+        },
+      })
+      const parsedRespose = await response.json()
+      console.log(parsedRespose)
+      if (parsedRespose.message === 'Profil sauvegardé') {
+        setHasProfile('1')
+        sessionStorage.setItem('hasProfile', '1')
+      }
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -54,9 +68,8 @@ function ProfileForm() {
       <Box component="form" onSubmit={handleSubmit}>
         <Typography
           variant="h6"
-          component={'h2'}
+          component="h2"
           sx={{ textAlign: 'center' }}
-          fullWidth
           color="success.light"
         >
           Votre compte a été créé avec succes ! <br />
@@ -115,6 +128,7 @@ function ProfileForm() {
         </Typography>
         {/* Avatar */}
         <TextField
+          onChange={handleFile}
           sx={{ marginTop: '1em' }}
           name="file"
           fullWidth

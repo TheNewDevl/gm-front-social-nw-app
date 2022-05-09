@@ -1,8 +1,6 @@
 import styled from 'styled-components'
-import { colors } from '../../styles/colors'
 
 export const CardComments = styled.div`
-  background-color: ${colors.quaternary};
   margin: 1em;
   padding: 1em;
 `
@@ -14,7 +12,6 @@ export const Post = styled.div`
   align-items: center;
   margin: 1em;
   padding: 1em;
-  background-color: ${colors.quaternary};
   border-radius: 0.5em;
   box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.5);
 `

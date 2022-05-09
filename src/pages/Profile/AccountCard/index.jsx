@@ -7,9 +7,8 @@ import {
 import { useContext, useState } from 'react'
 import { UserContext } from '../../../utils/context/context'
 import AccountDetails from '../AccountDetails'
-import CreateProfile from '../CreateProfile'
 
-function AccountCard({ profile }) {
+function AccountCard({ data }) {
   const { user } = useContext(UserContext)
   const [onChanging, setOnChanging] = useState(false)
 
@@ -17,11 +16,7 @@ function AccountCard({ profile }) {
     <AccoutInfoCard>
       <CardTitle>Mon compte</CardTitle>
 
-      {user.hasOwnProperty('profile') ? (
-        <AccountDetails profile={profile} />
-      ) : (
-        <CreateProfile />
-      )}
+      <AccountDetails />
 
       <AccountActions>
         {!onChanging ? (

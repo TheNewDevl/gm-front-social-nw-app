@@ -2,8 +2,7 @@ import { useFetch } from '../../utils/hooks/custom.hooks'
 
 function PostCards() {
   const { data, error, isLoading } = useFetch('posts')
-  console.log(data)
-  console.log(typeof data)
+
   return (
     <div className="rounded-lg p-10 shadow-lg hover:shadow-xl">
       {data &&

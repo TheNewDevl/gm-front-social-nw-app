@@ -11,7 +11,7 @@ export function usePostRequest(
   formErrors,
   token = null
 ) {
-  const { user, setUser, hasProfile, setHasProfile } = useContext(UserContext)
+  const { setUser, setHasProfile } = useContext(UserContext)
 
   const [data, setData] = useState(null)
   const [isLoading, setLoading] = useState(false)
@@ -43,7 +43,6 @@ export function usePostRequest(
       if (dataApi.message === 'Profil sauvegardé') {
         setHasProfile('1')
         sessionStorage.setItem('hasProfile', '1')
-        console.log(hasProfile)
       }
       setData(dataApi)
       if (dataApi.hasOwnProperty('token')) setUser(dataApi)
@@ -78,9 +77,10 @@ export function useFetch(uri) {
   const [data, setData] = useState()
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const { user } = useContext(UserContext)
 
-  const local = JSON.parse(sessionStorage.getItem('user'))
-  const token = local.user.token
+  /*  const local = JSON.parse(sessionStorage.getItem('user'))
+  const token = local.user.token */
 
   useEffect(() => {
     if (!uri) throw new Error('You must specify an url')
@@ -90,7 +90,7 @@ export function useFetch(uri) {
       try {
         const response = await fetch(`http://localhost:3000/api/${uri}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${user.user.token}`,
           },
         })
         const data = await response.json()

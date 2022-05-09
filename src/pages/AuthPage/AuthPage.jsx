@@ -23,7 +23,7 @@ function Home() {
 
   // if an user is set, redirect to the posts page
   if (user && (user.user.hasProfile === 1 || hasProfile === '1'))
-    return <Navigate to="/home" replace />
+    return <Navigate to="/" replace />
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>

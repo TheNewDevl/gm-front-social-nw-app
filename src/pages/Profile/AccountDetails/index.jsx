@@ -11,36 +11,32 @@ import {
 import { TextField } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../../utils/context/context'
-
-import { Default } from 'react'
+import { useFetch } from '../../../utils/hooks/custom.hooks'
 
 function AccountDetails({ profile }) {
-  const { user, setUser } = useContext(UserContext)
-
-  const createdAt = new Date(user.result.createdAt)
+  const { user } = useContext(UserContext)
+  const { data, isLoading, error } = useFetch(`profile/${user.user.id}`)
+  console.log(data)
+  /*  const createdAt = new Date(user.result.createdAt) */
 
   return (
     <InfoWrapper>
-      <InfoHeader>
-        <h2>{profile.name}</h2>
-        <AccountImage src={profile.avatar} alt="Avatar" />
-      </InfoHeader>
-      <InfoDetails>
-        <p>Username : {profile.username}</p>
-        <p>Email : {user.result.email}</p>
-        <TextField
-          size="small"
-          variant="standard"
-          margin="normal"
-          id={user.result.email}
-          value="teet"
-          name={user.result.email}
-          type={'email'}
-          autoComplete="off"
-        />
-        <p>Inscrit depuis le {createdAt.toLocaleDateString()}</p>
-        <p>A propos de moi : {profile.createdAt}</p>
-      </InfoDetails>
+      {isLoading ? (
+        <div>Is Loading...</div>
+      ) : (
+        <>
+          <InfoHeader>
+            <h2>{data.firstName}</h2>
+            <AccountImage src={data.photo} alt="Avatar" />
+          </InfoHeader>
+          <InfoDetails>
+            <p>Username : {user.user.username}</p>
+
+            <p>Inscrit depuis le </p>
+            <p>A propos de moi : {data.bio} </p>
+          </InfoDetails>
+        </>
+      )}
     </InfoWrapper>
   )
 }

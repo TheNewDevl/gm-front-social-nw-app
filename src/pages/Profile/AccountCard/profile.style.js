@@ -1,8 +1,6 @@
 import styled from 'styled-components'
-import { colors } from '../../../styles/colors'
 
 export const AccoutInfoCard = styled.div`
-  background-color: ${colors.quaternary};
   margin: 1em;
   padding: 1em;
 `
@@ -17,12 +15,10 @@ export const AccountActions = styled.div`
   justify-content: center;
 `
 export const ActionLink = styled.a`
-  color: ${colors.primary};
   text-decoration: none;
   margin: 0.5em;
   cursor: pointer;
   &:hover {
-    color: ${colors.secondary};
   }
   ${(props) =>
     props.toDelete &&
@@ -37,7 +33,6 @@ export const InfoWrapper = styled.div`
 `
 export const InfoHeader = styled.div`
   padding: 0 3em;
-  border-right: 2px solid ${colors.secondary};
 `
 export const InfoDetails = styled.div`
   padding: 0 3em;
