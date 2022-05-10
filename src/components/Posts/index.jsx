@@ -1,4 +1,4 @@
-import { ActionLink } from '../../pages/Profile/AccountCard/profile.style'
+import { ActionLink } from '../../pages/Profile/profile.style'
 import { PostsCard, CardTitle, Post, PostImg, PostDetails } from './posts.style'
 
 export default function Posts({ profile }) {

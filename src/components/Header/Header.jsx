@@ -25,7 +25,7 @@ function Header() {
   const { user, hasProfile, setUser } = useContext(UserContext)
 
   //This component returns the deployable menu
-  const HeaderMenu = ({ handleClose, open, anchorEl }) => {
+  const HeaderMenu = ({ handleClose, open, anchorEl, data }) => {
     return (
       <Menu
         anchorEl={anchorEl}
@@ -63,14 +63,14 @@ function Header() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem component={Link} to="/profile">
-          <Avatar /> Mon Profil
+          <Avatar src={data.photo} alt="Photo de profil" /> Mon Profil
         </MenuItem>
         <MenuItem>
-          <Avatar /> Mon compte
+          <Avatar src={data.photo} alt="Photo de profil" /> Mon compte
         </MenuItem>
 
         <MenuItem>
-          <Avatar /> Mes interactions
+          <Avatar src={data.photo} alt="Photo de profil" /> Mes interactions
         </MenuItem>
 
         <Divider />
@@ -97,7 +97,7 @@ function Header() {
   }
 
   //custom navigation menu that will expand the menu and display the user's profile picture
-  const HeaderNav = ({ id, token }) => {
+  const HeaderNav = () => {
     //custom menu states
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
@@ -114,7 +114,7 @@ function Header() {
     if (error) return <span>Une erreur s'est produite </span>
 
     return isLoading ? (
-      <Loader />
+      <Loader color="white" />
     ) : (
       <>
         <Tabs value={false}>
@@ -137,7 +137,7 @@ function Header() {
               <Avatar
                 src={data.photo}
                 alt="Photo de profil"
-                sx={{ width: 32, height: 32 }}
+                sx={{ width: 40, height: 40 }}
               />
             </IconButton>
           </Tooltip>
@@ -146,7 +146,7 @@ function Header() {
           handleClose={handleClose}
           open={open}
           anchorEl={anchorEl}
-          setAnchorEl={setAnchorEl}
+          data={data}
         />
       </>
     )
@@ -157,7 +157,8 @@ function Header() {
       <AppBar position="sticky">
         <Box className="container">
           <img className="logo" src={LogoPng} alt="Logo Groupomania" />
-          {(user && user.user.hasProfile === 1) || hasProfile === '1' ? (
+          {(user && user.user.hasProfile === 1) ||
+          (user && hasProfile === '1') ? (
             <HeaderNav token={user.user.token} id={user.user.id} />
           ) : null}
         </Box>

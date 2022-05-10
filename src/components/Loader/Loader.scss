@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -9,11 +11,17 @@
 }
 
 .loader {
+  margin: auto;
   padding: 10px;
-  border: 6px solid #fff;
+  border: 6px solid $secondary;
+  border-color: $secondary;
   border-bottom-color: transparent;
   border-radius: 22px;
   animation: rotate 1s infinite linear;
   height: 0;
   width: 0;
+  &--white {
+    border: 6px solid #fff;
+    border-bottom-color: transparent;
+  }
 }

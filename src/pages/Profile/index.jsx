@@ -1,47 +1,35 @@
-import AccountCard from './AccountCard'
-import Posts from '../../components/Posts'
-import Comments from '../../components/Comments/index'
+import AccountDetails from './AccountDetails'
+import ProfileForm from '../../components/ProfileForm/ProfileForm'
+import { UserContext } from '../../utils/context/context'
+import { useContext, useState } from 'react'
+import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 
-const profile = {
-  avatar: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
-  username: 'johndoe',
-  name: 'John Doe',
-  email: 'mail@mail.fr',
-  createdAt: '2020-01-01',
-  posts: [
-    {
-      id: 1,
-      image:
-        'https://cdn.pixabay.com/photo/2022/04/15/11/23/dog-7134183_960_720.jpg',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ',
-      createdAt: '2020-01-01',
-    },
-    {
-      id: 2,
-      image:
-        'https://cdn.pixabay.com/photo/2022/04/15/11/23/dog-7134183_960_720.jpg',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ',
-      createdAt: '2020-01-01',
-    },
-  ],
-  comments: [
-    {
-      id: 1,
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ',
-    },
-    {
-      id: 2,
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ',
-    },
-  ],
-}
 function Account() {
+  const { user } = useContext(UserContext)
+  const [display, setDisplay] = useState('profile')
+
+  const handleClick = (e) => {
+    setDisplay(e.currentTarget.value)
+  }
+
   return (
-    <main>
+    <main className="main">
       {/*  <MainTitle>Mon Profil</MainTitle> */}
-      <AccountCard />
-      <Posts profile={profile} />
-      <Comments profile={profile} />
+
+      <ToggleButtonGroup color="primary" fullWidth value={display} exclusive>
+        <ToggleButton onClick={handleClick} size="large" value="profile">
+          <Typography></Typography> Mon profil
+        </ToggleButton>
+        <ToggleButton onClick={handleClick} value="account">
+          Mon compte
+        </ToggleButton>
+      </ToggleButtonGroup>
+
+      {display === 'profile' ? (
+        <ProfileForm method="PATCH" uri={user.user.id} />
+      ) : (
+        <AccountDetails />
+      )}
     </main>
   )
 }

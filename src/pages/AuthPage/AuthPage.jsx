@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { useContext } from 'react'
 import { UserContext } from '../../utils/context/context'
-import ProfileForm from './ProfileForm/ProfileForm'
+import ProfileForm from '../../components/ProfileForm/ProfileForm'
 
 function Home() {
   const { user, hasProfile } = useContext(UserContext)
@@ -91,7 +91,21 @@ function Home() {
             )}
             {!user && hasAccount && <Login />}
             {!user && !hasAccount && <SignUp />}
-            {user && user.user.hasProfile === 0 && <ProfileForm />}
+            {user && user.user.hasProfile === 0 && (
+              <>
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ textAlign: 'center' }}
+                  color="success.light"
+                >
+                  Votre compte a été créé avec succes ! <br />
+                  Aidez vos collègues à mieux vous connaître en complétant votre
+                  profil.
+                </Typography>
+                <ProfileForm method={'POST'} />
+              </>
+            )}
           </Box>
         </Box>
       </Grid>
