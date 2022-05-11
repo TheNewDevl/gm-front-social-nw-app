@@ -3,6 +3,7 @@ import AuthPage from './pages/AuthPage/AuthPage'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
+import Interactions from './pages/Interactions/Interactions'
 import { CssBaseline } from '@mui/material'
 import ProtectedRoute from './auth/ProtectedRoute'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -44,6 +45,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/profile/" element={<Profile />} />
+            <Route path="/profile/interactions" element={<Interactions />} />
           </Route>
         </Routes>
       </BrowserRouter>

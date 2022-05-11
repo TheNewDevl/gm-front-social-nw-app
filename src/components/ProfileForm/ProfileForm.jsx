@@ -1,12 +1,16 @@
 import * as React from 'react'
 import { useState } from 'react'
 
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import { Avatar, Typography } from '@mui/material'
-import Box from '@mui/material/Box'
+import {
+  Avatar,
+  Typography,
+  Input,
+  TextField,
+  Button,
+  Box,
+  CircularProgress,
+} from '@mui/material'
 
-import { CircularProgress } from '@mui/material'
 import { useContext } from 'react'
 import { UserContext } from '../../utils/context/context'
 import './ProfileForm.scss'
@@ -14,6 +18,9 @@ import './ProfileForm.scss'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
+
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert from '@mui/material/Alert'
 
 function ProfileForm({ method, uri = '' }) {
   const [profileInputs, setprofileInputs] = useState({
@@ -26,6 +33,7 @@ function ProfileForm({ method, uri = '' }) {
   const [loading, setLoading] = useState(false)
   const [formErrors] = useState({})
   const { user, setHasProfile } = useContext(UserContext)
+  const [successAlert, setSuccessAlert] = useState(false)
 
   //if the profile has already been created, the fields are pre-filled with the profile data
   const { data, isLoading } = useFetch(`profile/${user.user.id}`)
@@ -74,6 +82,9 @@ function ProfileForm({ method, uri = '' }) {
         setHasProfile('1')
         sessionStorage.setItem('hasProfile', '1')
       }
+
+      //set success alert if res ok
+      if (response.ok) setSuccessAlert(true)
     } catch (error) {
       console.log(error)
       setError(error)
@@ -82,6 +93,7 @@ function ProfileForm({ method, uri = '' }) {
     }
   }
 
+  //will display a profile picture if it exists
   const ProfilePic = () => {
     if (data) {
       return (
@@ -94,6 +106,18 @@ function ProfileForm({ method, uri = '' }) {
       )
     }
   }
+
+  //handle snackbar close
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setSuccessAlert(false)
+  }
+
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+  })
 
   return (
     <>
@@ -158,7 +182,8 @@ function ProfileForm({ method, uri = '' }) {
             {formErrors.bio}
           </Typography>
           {/* Avatar */}
-          <TextField
+          <Input
+            accept="image/*"
             onChange={handleFile}
             sx={{ marginTop: '1em' }}
             name="file"
@@ -180,6 +205,20 @@ function ProfileForm({ method, uri = '' }) {
           >
             {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
           </Button>
+
+          <Snackbar
+            open={successAlert}
+            autoHideDuration={3000}
+            onClose={handleClose}
+          >
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              sx={{ width: '100%' }}
+            >
+              Modifications enregistrées !
+            </Alert>
+          </Snackbar>
         </Box>
       )}
     </>

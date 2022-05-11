@@ -62,19 +62,13 @@ function Header() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+        <MenuItem component={Link} to="/profile/interactions">
+          <Avatar src={data.photo} alt="Photo de profil" /> Mes interactions
+        </MenuItem>
         <MenuItem component={Link} to="/profile">
           <Avatar src={data.photo} alt="Photo de profil" /> Mon Profil
         </MenuItem>
-        <MenuItem>
-          <Avatar src={data.photo} alt="Photo de profil" /> Mon compte
-        </MenuItem>
-
-        <MenuItem>
-          <Avatar src={data.photo} alt="Photo de profil" /> Mes interactions
-        </MenuItem>
-
         <Divider />
-
         <MenuItem
           component={Link}
           to="/auth"

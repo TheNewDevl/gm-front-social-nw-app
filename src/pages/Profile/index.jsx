@@ -2,7 +2,7 @@ import AccountDetails from './AccountDetails'
 import ProfileForm from '../../components/ProfileForm/ProfileForm'
 import { UserContext } from '../../utils/context/context'
 import { useContext, useState } from 'react'
-import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 function Account() {
   const { user } = useContext(UserContext)
@@ -18,7 +18,7 @@ function Account() {
 
       <ToggleButtonGroup color="primary" fullWidth value={display} exclusive>
         <ToggleButton onClick={handleClick} size="large" value="profile">
-          <Typography></Typography> Mon profil
+          Mon profil
         </ToggleButton>
         <ToggleButton onClick={handleClick} value="account">
           Mon compte
