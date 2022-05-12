@@ -28,7 +28,10 @@ function ProfileForm({ method, uri = '' }) {
     lastName: '',
     bio: '',
   })
-  const [file, setFile] = useState()
+  const [file, setFile] = useState({
+    file: '',
+    urlForPreview: null,
+  })
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
   const [formErrors] = useState({})
@@ -55,7 +58,11 @@ function ProfileForm({ method, uri = '' }) {
   }
 
   const handleFile = (e) => {
-    setFile(e.target.files[0])
+    setFile({
+      file: e.target.files[0],
+      //for preview img
+      urlForPreview: URL.createObjectURL(e.target.files[0]),
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -64,7 +71,7 @@ function ProfileForm({ method, uri = '' }) {
       e.preventDefault()
       const data = new FormData()
       //append file only if file exists (back requirement)
-      file && data.append('file', file)
+      file && data.append('file', file.file)
       data.append('firstName', profileInputs.firstName)
       data.append('lastName', profileInputs.lastName)
       data.append('bio', profileInputs.bio)
@@ -95,12 +102,12 @@ function ProfileForm({ method, uri = '' }) {
 
   //will display a profile picture if it exists
   const ProfilePic = () => {
-    if (data) {
+    if (data || file.urlForPreview) {
       return (
         <Avatar
           className="profilePic"
           sx={{ width: 150, height: 150 }}
-          src={data.photo}
+          src={file.urlForPreview ? file.urlForPreview : data.photo}
           alt="Photo de profil"
         />
       )
