@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 import CreatePost from '../../components/CreatePost/CreatePost'
-import PostCard from '../../components/PostCard'
+import PostCard from '../../components/Post/Post'
 import './Home.scss'
 
 function Home() {
