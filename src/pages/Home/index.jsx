@@ -1,15 +1,18 @@
 import { Grid } from '@mui/material'
+import { useState } from 'react'
 import CreatePost from '../../components/CreatePost/CreatePost'
-import PostCard from '../../components/Post/Post'
+import PostsDisplay from '../../components/PostsDisplay/PostsDisplay'
 import './Home.scss'
 
 function Home() {
+  const [data, setData] = useState([])
+
   return (
     <main className="main">
       <Grid>
         <Grid>
-          <CreatePost />
-          <PostCard />
+          <CreatePost data={data} setData={setData} />
+          <PostsDisplay data={data} setData={setData} />
         </Grid>
       </Grid>
     </main>

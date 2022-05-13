@@ -71,7 +71,7 @@ function ProfileForm({ method, uri = '' }) {
       e.preventDefault()
       const data = new FormData()
       //append file only if file exists (back requirement)
-      file && data.append('file', file.file)
+      file.file && data.append('file', file.file)
       data.append('firstName', profileInputs.firstName)
       data.append('lastName', profileInputs.lastName)
       data.append('bio', profileInputs.bio)
@@ -217,6 +217,7 @@ function ProfileForm({ method, uri = '' }) {
             open={successAlert}
             autoHideDuration={3000}
             onClose={handleClose}
+            type="success"
           >
             <Alert
               onClose={handleClose}

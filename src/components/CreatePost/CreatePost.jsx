@@ -17,7 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import SuccessAlert from '../Alert/SuccessAlert'
 
-function CreatePost() {
+function CreatePost({ data, setData }) {
   const { user } = useContext(UserContext)
   const [inputs, setInputs] = useState({
     text: '',
@@ -58,6 +58,13 @@ function CreatePost() {
     setInputs({ ...inputs, file: '', urlForPreview: null })
   }
 
+  //will update posts data array to render the post without any request
+  const updateData = (post) => {
+    const oldArray = [...data]
+    oldArray.unshift(post)
+    setData(oldArray)
+  }
+
   const handleSubmit = async (e) => {
     setLoading(true)
     try {
@@ -82,7 +89,7 @@ function CreatePost() {
         setOpen(true)
       }
       const parsedRespose = await response.json()
-      console.log(parsedRespose)
+      updateData(parsedRespose.post)
     } catch (error) {
       console.log(error)
       setError(error.message)
@@ -185,6 +192,7 @@ function CreatePost() {
         open={open}
         message="Publication enregistrée"
         handleClose={handleClose}
+        type="success"
       />
     </>
   )
