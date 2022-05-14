@@ -1,21 +1,15 @@
 import {
-  Typography,
   Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  TextareaAutosize,
-  Stack,
-  Input,
-  CircularProgress,
 } from '@mui/material'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../utils/context/context'
-import { PhotoCamera } from '@mui/icons-material'
-import SendIcon from '@mui/icons-material/Send'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import SuccessAlert from '../Alert/SuccessAlert'
+import PostForm from '../PostForm/PostForm'
 
 function CreatePost({ data, setData }) {
   const { user } = useContext(UserContext)
@@ -38,24 +32,18 @@ function CreatePost({ data, setData }) {
 
   //Accordion state
   const [expanded, setExpanded] = useState(false)
+  useEffect(() => {
+    if (!expanded)
+      return () =>
+        setInputs({
+          text: '',
+          file: '',
+          urlForPreview: null,
+        })
+  }, [expanded])
+
   const handleChangeAccordion = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false)
-  }
-  //Set states for Fetch Request
-  const handleText = (e) => {
-    setInputs({ ...inputs, text: e.target.value })
-  }
-  const handleFile = (e) => {
-    setInputs({
-      ...inputs,
-      file: e.target.files[0],
-      //for preview img
-      urlForPreview: URL.createObjectURL(e.target.files[0]),
-    })
-  }
-
-  const handleDete = () => {
-    setInputs({ ...inputs, file: '', urlForPreview: null })
   }
 
   //will update posts data array to render the post without any request
@@ -98,16 +86,6 @@ function CreatePost({ data, setData }) {
     }
   }
 
-  const ImgPreview = () => {
-    if (inputs.urlForPreview) {
-      return (
-        <div className="img_container">
-          <img src={inputs.urlForPreview} alt="preview" />
-        </div>
-      )
-    }
-  }
-
   return (
     <>
       <Accordion
@@ -127,65 +105,13 @@ function CreatePost({ data, setData }) {
         </AccordionSummary>
 
         <AccordionDetails className="accordion__content">
-          <form onSubmit={handleSubmit}>
-            <Typography component="label" variant="overline" htmlFor="text">
-              Une anecdote ? Une info à partager ? Une photo ? C'est par ici !
-            </Typography>
-            <TextareaAutosize
-              className="bio__input"
-              required
-              minRows={7}
-              maxRows={20}
-              name="text"
-              aria-label="saisie du contenu textuel"
-              value={inputs.text}
-              onChange={handleText}
-              placeholder="Ecrivez quelque chose"
-            />
-            <ImgPreview />
-
-            {error && (
-              <Typography component="span" variant="button" color="error.light">
-                {error}
-              </Typography>
-            )}
-
-            <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
-              <label htmlFor="file">
-                <Input
-                  sx={{ display: 'none' }}
-                  className="upload__input"
-                  accept="image/*"
-                  id="file"
-                  type="file"
-                  onChange={handleFile}
-                />
-                <Button variant="outlined" component="span">
-                  Image
-                  <PhotoCamera className="upload__icon" />
-                </Button>
-              </label>
-              {inputs.urlForPreview && (
-                <Button variant="outlined" color="error" onClick={handleDete}>
-                  Supprimer <PhotoCamera className="upload__icon" />
-                </Button>
-              )}
-
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={loading ? true : false}
-              >
-                {loading ? (
-                  <CircularProgress size={'1.7em'} />
-                ) : (
-                  <>
-                    Publier <SendIcon className="upload__icon" />
-                  </>
-                )}
-              </Button>
-            </Stack>
-          </form>
+          <PostForm
+            inputs={inputs}
+            setInputs={setInputs}
+            error={error}
+            handleSubmit={handleSubmit}
+            loading={loading}
+          />
         </AccordionDetails>
       </Accordion>
       <SuccessAlert

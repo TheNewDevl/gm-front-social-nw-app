@@ -15,6 +15,8 @@ import ModeCommentIcon from '@mui/icons-material/ModeComment'
 import { Button, TextareaAutosize } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import DeletePost from './DeletePost'
+import UpdatePost from './UpdatePost'
+
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
@@ -47,14 +49,22 @@ export default function PostCard({ setData, data, post, alertStatus }) {
           ></Avatar>
         }
         action={
-          <DeletePost
-            alertStatus={alertStatus}
-            setData={setData}
-            data={data}
-            post={post}
-          />
+          <>
+            <DeletePost
+              alertStatus={alertStatus}
+              setData={setData}
+              data={data}
+              post={post}
+            />
+            <UpdatePost
+              alertStatus={alertStatus}
+              setData={setData}
+              data={data}
+              post={post}
+            />
+          </>
         }
-        title={post.user.username}
+        title={`@${post.user.username}`}
         subheader={date}
       />
       {post.image && (
@@ -82,7 +92,7 @@ export default function PostCard({ setData, data, post, alertStatus }) {
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
-          aria-label="show more"
+          aria-label="comment and show comments"
         >
           <ExpandMoreIcon />
         </ExpandMore>

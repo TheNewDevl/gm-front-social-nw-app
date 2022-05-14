@@ -10,10 +10,8 @@ function Home() {
   return (
     <main className="main">
       <Grid>
-        <Grid>
-          <CreatePost data={data} setData={setData} />
-          <PostsDisplay data={data} setData={setData} />
-        </Grid>
+        <CreatePost data={data} setData={setData} />
+        <PostsDisplay data={data} setData={setData} />
       </Grid>
     </main>
   )

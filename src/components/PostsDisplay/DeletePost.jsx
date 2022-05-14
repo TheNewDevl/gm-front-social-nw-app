@@ -60,7 +60,7 @@ function DeletePost({ post, data, setData, alertStatus }) {
     }
   }
 
-  if (user.user.id === post.user.id || user.user.role === 'admin') {
+  if (user.user.id === post.user.id || user.user.roles === 'admin') {
     return (
       <>
         <IconButton onClick={() => setOpenPopUp(true)} aria-label="delete post">

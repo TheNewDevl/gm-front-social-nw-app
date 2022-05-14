@@ -26,7 +26,7 @@ function AccountDetails() {
 
   useEffect(() => {
     if (data) {
-      const role = data.role === 'admin' ? 'Administrateur' : 'Utilisateur'
+      const role = data.roles === 'admin' ? 'Administrateur' : 'Utilisateur'
       const hasProfile = data.hasProfile === 1 ? 'Oui' : 'Non'
       setDisplayData([
         { label: "Nom d'utilisateur", value: data.username },
