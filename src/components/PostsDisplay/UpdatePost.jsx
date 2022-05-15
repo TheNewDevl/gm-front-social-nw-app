@@ -40,7 +40,7 @@ function UpdatePost({ post, data, setData, alertStatus }) {
     })
   }
 
-  useEffect(() => {
+  useEffect((post) => {
     if (post)
       setUpdateInputs({
         text: post.text,

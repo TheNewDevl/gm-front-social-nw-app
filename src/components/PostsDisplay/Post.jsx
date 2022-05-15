@@ -17,6 +17,7 @@ import SendIcon from '@mui/icons-material/Send'
 import DeletePost from './DeletePost'
 import UpdatePost from './UpdatePost'
 
+import LikesManagement from './LikesManagement'
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
@@ -81,9 +82,7 @@ export default function PostCard({ setData, data, post, alertStatus }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
+        <LikesManagement post={post} data={data} setData={setData} />
         <IconButton onClick={handleExpandClick} aria-label="add to favorites">
           <ModeCommentIcon expand={expanded} />
         </IconButton>
