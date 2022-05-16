@@ -18,9 +18,7 @@ import './ProfileForm.scss'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
-
-import Snackbar from '@mui/material/Snackbar'
-import MuiAlert from '@mui/material/Alert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function ProfileForm({ method, uri = '' }) {
   const [profileInputs, setprofileInputs] = useState({
@@ -114,18 +112,6 @@ function ProfileForm({ method, uri = '' }) {
     }
   }
 
-  //handle snackbar close
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setSuccessAlert(false)
-  }
-
-  const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-  })
-
   return (
     <>
       {isLoading ? (
@@ -213,20 +199,12 @@ function ProfileForm({ method, uri = '' }) {
             {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
           </Button>
 
-          <Snackbar
+          <FeedBackAlert
+            message="Modifications enregistrées !"
             open={successAlert}
-            autoHideDuration={3000}
-            onClose={handleClose}
+            setOpenState={setSuccessAlert}
             type="success"
-          >
-            <Alert
-              onClose={handleClose}
-              severity="success"
-              sx={{ width: '100%' }}
-            >
-              Modifications enregistrées !
-            </Alert>
-          </Snackbar>
+          />
         </Box>
       )}
     </>

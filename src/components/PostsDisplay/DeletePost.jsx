@@ -10,28 +10,20 @@ import {
 import { useContext, useState } from 'react'
 import { UserContext } from '../../utils/context/context'
 import DeleteIcon from '@mui/icons-material/Delete'
-import SuccessAlert from '../Alert/SuccessAlert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function DeletePost({ post, data, setData, alertStatus }) {
   const { user } = useContext(UserContext)
   const [openPopUp, setOpenPopUp] = useState(false)
   const [error, setError] = useState()
 
-  //Update data state to delete the post from the DOM
   const [openAlert, setOpenAlert] = useState(false)
 
+  //Update data state to delete the post from the DOM
   const updateDom = () => {
     const oldData = [...data]
     const newData = oldData.filter((p) => p.id !== post.id)
     setData(newData)
-  }
-
-  //alert
-  const handleCloseAlert = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenAlert(false)
   }
 
   //Delete API request
@@ -89,10 +81,10 @@ function DeletePost({ post, data, setData, alertStatus }) {
           </Dialog>
         </div>
 
-        <SuccessAlert
+        <FeedBackAlert
           message={error}
           open={openAlert}
-          handleClose={handleCloseAlert}
+          setOpenState={setOpenAlert}
           type="error"
         />
       </>

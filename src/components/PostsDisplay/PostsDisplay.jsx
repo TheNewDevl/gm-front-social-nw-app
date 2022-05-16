@@ -4,7 +4,7 @@ import { UserContext } from '../../utils/context/context'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
 import PostCard from './Post'
-import SuccessAlert from '../Alert/SuccessAlert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function PostsDisplay({ data, setData }) {
   const { user } = useContext(UserContext)
@@ -18,13 +18,6 @@ function PostsDisplay({ data, setData }) {
 
   //alert
   const [open, setOpen] = useState(false)
-  //handle snackbar close
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpen(false)
-  }
 
   //get posts with pagination with uploading offset while scrolling the page
   const loadPosts = async () => {
@@ -110,10 +103,10 @@ function PostsDisplay({ data, setData }) {
           />
         ))}
       {isLoading && <Loader />}
-      <SuccessAlert
+      <FeedBackAlert
         open={open}
         message="Publication supprimée"
-        handleClose={handleClose}
+        setOpenState={setOpen}
         type="success"
       />
     </div>

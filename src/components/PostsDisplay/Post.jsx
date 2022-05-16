@@ -9,15 +9,14 @@ import Collapse from '@mui/material/Collapse'
 import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ModeCommentIcon from '@mui/icons-material/ModeComment'
-import { Button, TextareaAutosize } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send'
 import DeletePost from './DeletePost'
 import UpdatePost from './UpdatePost'
 
 import LikesManagement from './LikesManagement'
+import CreateComment from '../CreateComment/CreateComment'
+
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
@@ -97,21 +96,7 @@ export default function PostCard({ setData, data, post, alertStatus }) {
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <TextareaAutosize
-            className="bio__input"
-            required
-            minRows={2}
-            maxRows={20}
-            name="text"
-            aria-label="saisie du contenu textuel"
-            placeholder="Réagissez à cette publication ici"
-          />
-        </CardContent>
-
-        <Button style={{ margin: '1em' }} type="submit">
-          Publier <SendIcon className="upload__icon" />
-        </Button>
+        <CreateComment postId={post.id} />
       </Collapse>
     </Card>
   )

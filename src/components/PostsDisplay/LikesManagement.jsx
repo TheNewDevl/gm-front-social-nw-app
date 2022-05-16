@@ -2,7 +2,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import { IconButton } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../utils/context/context'
-import SuccessAlert from '../Alert/SuccessAlert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function LikesManagement({ post, data, setData }) {
   const { user } = useContext(UserContext)
@@ -19,17 +19,6 @@ function LikesManagement({ post, data, setData }) {
       setLikesCount(post.likes.length)
     }
   }, [data, post])
-
-  //handle snackbar close
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenAlert({
-      success: false,
-      fail: false,
-    })
-  }
 
   const updateDom = (type) => {
     const oldData = [...data]
@@ -86,20 +75,20 @@ function LikesManagement({ post, data, setData }) {
         />
         <span className="likesCount">{likesCount}</span>
       </IconButton>
-      <SuccessAlert
+      <FeedBackAlert
         message={
           openAlert.success
             ? `${post.user.username} vous remercie !`
             : `${post.user.username} est triste que vous n'aimiez plus son post !`
         }
         open={openAlert.success || openAlert.dislike}
-        handleClose={handleClose}
-        type={openAlert.success ? 'success' : 'warning'}
+        setOpenState={setOpenAlert}
+        type={openAlert.success ? 'success' : 'info'}
       />
-      <SuccessAlert
+      <FeedBackAlert
         message={error}
         open={openAlert.fail}
-        handleClose={handleClose}
+        setOpenState={setOpenAlert}
         type="error"
       />
     </>

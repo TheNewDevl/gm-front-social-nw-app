@@ -9,10 +9,10 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../utils/context/context'
-import SuccessAlert from '../Alert/SuccessAlert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 import PostForm from '../PostForm/PostForm'
 
-function UpdatePost({ post, data, setData, alertStatus }) {
+function UpdatePost({ post, data, setData }) {
   const { user } = useContext(UserContext)
   const [openDialog, setOpenDialog] = useState(false)
   const [openAlert, setOpenAlert] = useState({
@@ -28,17 +28,6 @@ function UpdatePost({ post, data, setData, alertStatus }) {
     file: '',
     urlForPreview: null,
   })
-
-  //handle snackbar close
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenAlert({
-      success: false,
-      fail: false,
-    })
-  }
 
   useEffect((post) => {
     if (post)
@@ -128,16 +117,16 @@ function UpdatePost({ post, data, setData, alertStatus }) {
             </DialogActions>
           </Dialog>
         </div>
-        <SuccessAlert
+        <FeedBackAlert
           message="Modifications enregistrées !"
           open={openAlert.success}
-          handleClose={handleClose}
+          setOpenState={setOpenAlert}
           type="success"
         />
-        <SuccessAlert
+        <FeedBackAlert
           message={error}
           open={openAlert.fail}
-          handleClose={handleClose}
+          setOpenState={setOpenAlert}
           type="error"
         />
       </>

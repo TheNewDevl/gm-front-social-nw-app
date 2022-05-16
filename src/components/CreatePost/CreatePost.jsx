@@ -8,7 +8,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../utils/context/context'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
-import SuccessAlert from '../Alert/SuccessAlert'
+import FeedBackAlert from '../Alert/FeedBackAlert'
 import PostForm from '../PostForm/PostForm'
 
 function CreatePost({ data, setData }) {
@@ -23,12 +23,6 @@ function CreatePost({ data, setData }) {
 
   //handle snackbar close
   const [open, setOpen] = useState(false)
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpen(false)
-  }
 
   //Accordion state
   const [expanded, setExpanded] = useState(false)
@@ -114,10 +108,10 @@ function CreatePost({ data, setData }) {
           />
         </AccordionDetails>
       </Accordion>
-      <SuccessAlert
+      <FeedBackAlert
         open={open}
         message="Publication enregistrée"
-        handleClose={handleClose}
+        setOpenState={setOpen}
         type="success"
       />
     </>
