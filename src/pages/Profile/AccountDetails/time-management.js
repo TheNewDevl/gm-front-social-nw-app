@@ -37,5 +37,5 @@ export default function timeManagement(startDate) {
     return recap.min + ' m'
   }
 
-  return `${yearString()} ${monthString()} ${dayString()} ${hourString()} et ${minString()}`
+  return `${yearString()} ${monthString()} ${dayString()} ${hourString()} ${minString()}`
 }

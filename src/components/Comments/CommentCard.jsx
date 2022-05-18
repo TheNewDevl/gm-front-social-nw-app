@@ -2,7 +2,16 @@ import { Avatar, Button } from '@mui/material'
 import './CommentCard.scss'
 import timeManagement from '../../pages/Profile/AccountDetails/time-management'
 import CommentActions from './CommentActions'
-function CommentCard({ comment }) {
+
+function CommentCard({
+  commentAlert,
+  setCommentAlert,
+  commentsCount,
+  setCommentsCount,
+  comments,
+  setDataComment,
+  comment,
+}) {
   const time = timeManagement(comment.createdAt)
   return (
     <div data-id={comment.id} className="comment">
@@ -21,7 +30,16 @@ function CommentCard({ comment }) {
         </div>
         <div className="comment__actions">
           <p className="comment__content--time">{time}</p>
-          <CommentActions userId={comment.user.id} />
+          <CommentActions
+            commentAlert={commentAlert}
+            setCommentAlert={setCommentAlert}
+            commentsCount={commentsCount}
+            setCommentsCount={setCommentsCount}
+            comments={comments}
+            setDataComment={setDataComment}
+            comment={comment}
+            userId={comment.user.id}
+          />
         </div>
       </div>
     </div>

@@ -16,9 +16,11 @@ import timeManagement from '../../pages/Profile/AccountDetails/time-management'
 import LikesManagement from './LikesManagement'
 import CreateComment from '../CreateComment/CreateComment'
 import CommentsCounter from '../Comments/CommentsCounter'
-import CommentCard from '../Comments/CommentCard'
 import { Divider } from '@mui/material'
 import Comments from '../Comments/Comments'
+import { UserContext } from '../../utils/context/context'
+import FeedBackAlert from '../Alert/FeedBackAlert'
+
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
@@ -35,15 +37,60 @@ export default function PostCard({ setData, data, post, alertStatus }) {
   //comments state
   const [dataComment, setDataComment] = React.useState([])
   const [commentsCount, setCommentsCount] = React.useState(undefined)
-
+  const [commentAlert, setCommentAlert] = React.useState({
+    success: false,
+    fail: false,
+  })
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
-  /*  const createdAt = new Date(post.createdAt)
-  const date =
-    createdAt.toLocaleDateString() + ' ' + createdAt.toLocaleTimeString()
- */
+
   const date = timeManagement(post.createdAt)
+
+  /*********** LOGIQUE DE RECUPERATION DES COMMENTAIRES A REPLACER */
+  const { user } = React.useContext(UserContext)
+  const [error, setError] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const queryComRefs = React.useRef({
+    limit: 1,
+    offset: 0,
+    count: 0,
+  })
+
+  const getComments = async () => {
+    try {
+      setIsLoading(true)
+      const uri = `comment/post/${post.id}/?limit=${queryComRefs.current.limit}&offset=${queryComRefs.current.offset}`
+      const res = await fetch(process.env.REACT_APP_BASE_URL_API + uri, {
+        headers: {
+          Authorization: `Bearer ${user.user.token}`,
+        },
+      })
+      const parsedRes = await res.json()
+      if (res.ok) {
+        setDataComment((data) => [...data, ...parsedRes[0]])
+        setCommentsCount(parsedRes[1])
+        queryComRefs.current.count = parsedRes[1]
+      } else {
+        setError(parsedRes.message)
+      }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsLoading(false)
+      queryComRefs.current.offset += queryComRefs.current.limit
+      queryComRefs.current.limit = 5
+    }
+  }
+  /**************** LOGIQUE DE RECUPERATION DES COMMENTAIRES A REPLACER */
+
+  //get comments
+  React.useEffect(() => {
+    if (post.id && queryComRefs.current.offset === 0) {
+      getComments()
+    }
+  }, [])
+
   return (
     <Card data-id={post.id} className="post">
       <CardHeader
@@ -109,17 +156,31 @@ export default function PostCard({ setData, data, post, alertStatus }) {
       </CardActions>
 
       <Divider />
-      <Comments
-        comments={dataComment}
-        setCommentsCount={setCommentsCount}
-        postId={post.id}
-        setDataComment={setDataComment}
-      />
-      <Collapse in={expanded} timeout="auto" unmountOnExit></Collapse>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CreateComment postId={post.id} />
+        <Comments
+          commentAlert={commentAlert}
+          setCommentAlert={setCommentAlert}
+          commentsCount={commentsCount}
+          setCommentsCount={setCommentsCount}
+          queryComRefs={queryComRefs}
+          getCommentsfn={getComments}
+          comments={dataComment}
+          setDataComment={setDataComment}
+          isLoading={isLoading}
+          error={error}
+        />
+        <CreateComment
+          setCommentAlert={setCommentAlert}
+          commentsCount={commentsCount}
+          setCommentsCount={setCommentsCount}
+          dataComment={dataComment}
+          setDataComment={setDataComment}
+          postId={post.id}
+        />
       </Collapse>
+
+      <FeedBackAlert />
     </Card>
   )
 }

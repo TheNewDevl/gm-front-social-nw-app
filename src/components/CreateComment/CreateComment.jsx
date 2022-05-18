@@ -9,7 +9,13 @@ import { useContext, useState } from 'react'
 import { UserContext } from '../../utils/context/context'
 import FeedBackAlert from '../Alert/FeedBackAlert'
 
-function CreateComment({ postId }) {
+function CreateComment({
+  commentsCount,
+  setCommentsCount,
+  postId,
+  dataComment,
+  setDataComment,
+}) {
   const { user } = useContext(UserContext)
   const [input, setInput] = useState()
   const [loading, setLoading] = useState(false)
@@ -18,6 +24,14 @@ function CreateComment({ postId }) {
     fail: false,
   })
   const [error, setError] = useState(false)
+
+  //will update comments state array to render the new comment
+  const updateDom = (newComment) => {
+    const oldArray = [...dataComment]
+    oldArray.unshift(newComment)
+    setDataComment(oldArray)
+    setCommentsCount(commentsCount + 1)
+  }
 
   //post Request
   const handleSubmit = async (e) => {
@@ -38,6 +52,7 @@ function CreateComment({ postId }) {
       if (res.ok) {
         setInput('')
         setOpenAlert({ success: true })
+        updateDom(parsedRes)
       } else {
         setError(parsedRes.message)
         setOpenAlert({ fail: true })
