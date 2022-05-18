@@ -10,13 +10,15 @@ import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import ModeCommentIcon from '@mui/icons-material/ModeComment'
 import DeletePost from './DeletePost'
 import UpdatePost from './UpdatePost'
-
+import timeManagement from '../../pages/Profile/AccountDetails/time-management'
 import LikesManagement from './LikesManagement'
 import CreateComment from '../CreateComment/CreateComment'
-
+import CommentsCounter from '../Comments/CommentsCounter'
+import CommentCard from '../Comments/CommentCard'
+import { Divider } from '@mui/material'
+import Comments from '../Comments/Comments'
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
@@ -30,14 +32,18 @@ const ExpandMore = styled((props) => {
 
 export default function PostCard({ setData, data, post, alertStatus }) {
   const [expanded, setExpanded] = React.useState(false)
+  //comments state
+  const [dataComment, setDataComment] = React.useState([])
+  const [commentsCount, setCommentsCount] = React.useState(undefined)
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
-  const createdAt = new Date(post.createdAt)
+  /*  const createdAt = new Date(post.createdAt)
   const date =
     createdAt.toLocaleDateString() + ' ' + createdAt.toLocaleTimeString()
-
+ */
+  const date = timeManagement(post.createdAt)
   return (
     <Card data-id={post.id} className="post">
       <CardHeader
@@ -64,6 +70,11 @@ export default function PostCard({ setData, data, post, alertStatus }) {
             />
           </>
         }
+        titleTypographyProps={{
+          color: 'primary',
+          fontWeight: 'fontWeightBold',
+          variant: 'body1',
+        }}
         title={`@${post.user.username}`}
         subheader={date}
       />
@@ -82,9 +93,10 @@ export default function PostCard({ setData, data, post, alertStatus }) {
       </CardContent>
       <CardActions disableSpacing>
         <LikesManagement post={post} data={data} setData={setData} />
-        <IconButton onClick={handleExpandClick} aria-label="add to favorites">
-          <ModeCommentIcon expand={expanded} />
-        </IconButton>
+        <CommentsCounter
+          count={commentsCount}
+          expendCollapse={handleExpandClick}
+        />
 
         <ExpandMore
           expand={expanded}
@@ -95,6 +107,16 @@ export default function PostCard({ setData, data, post, alertStatus }) {
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
+
+      <Divider />
+      <Comments
+        comments={dataComment}
+        setCommentsCount={setCommentsCount}
+        postId={post.id}
+        setDataComment={setDataComment}
+      />
+      <Collapse in={expanded} timeout="auto" unmountOnExit></Collapse>
+
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CreateComment postId={post.id} />
       </Collapse>

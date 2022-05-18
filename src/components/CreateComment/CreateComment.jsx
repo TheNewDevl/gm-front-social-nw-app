@@ -13,7 +13,10 @@ function CreateComment({ postId }) {
   const { user } = useContext(UserContext)
   const [input, setInput] = useState()
   const [loading, setLoading] = useState(false)
-  const [openAlert, setOpenAlert] = useState(false)
+  const [openAlert, setOpenAlert] = useState({
+    success: false,
+    fail: false,
+  })
   const [error, setError] = useState(false)
 
   //post Request
@@ -21,7 +24,7 @@ function CreateComment({ postId }) {
     setLoading(true)
     try {
       e.preventDefault()
-      const res = await fetch(`http://localhost:3000/api/comment`, {
+      const res = await fetch(process.env.REACT_APP_BASE_URL_API + 'comment', {
         method: 'POST',
 
         body: JSON.stringify({ postId, text: input }),
@@ -34,12 +37,15 @@ function CreateComment({ postId }) {
 
       if (res.ok) {
         setInput('')
-        setOpenAlert(true)
+        setOpenAlert({ success: true })
       } else {
-        setError()
+        setError(parsedRes.message)
+        setOpenAlert({ fail: true })
       }
     } catch (error) {
       console.log(error)
+      setError(error.message)
+      setOpenAlert({ fail: true })
     } finally {
       setLoading(false)
     }
@@ -61,7 +67,11 @@ function CreateComment({ postId }) {
         />
       </CardContent>
 
-      <Button onClick={handleSubmit} style={{ margin: '1em' }} type="submit">
+      <Button
+        onClick={handleSubmit}
+        style={{ marginLeft: '1em', marginTop: '-1.5em' }}
+        type="submit"
+      >
         {loading ? (
           <CircularProgress size={'1.7em'} />
         ) : (
@@ -71,10 +81,10 @@ function CreateComment({ postId }) {
         )}
       </Button>
       <FeedBackAlert
-        message="Enregistré !"
-        open={openAlert}
+        message={openAlert.success ? 'Enregistré !' : `${error}`}
+        open={openAlert.success || openAlert.fail}
         setOpenState={setOpenAlert}
-        type="success"
+        type={openAlert.success ? 'success' : 'error'}
       />
     </>
   )

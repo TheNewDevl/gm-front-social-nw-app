@@ -1,5 +1,5 @@
 // calculate duration between two dates in years, month and days
-export default function signUpTime(startDate) {
+export default function timeManagement(startDate) {
   let recap = {}
   let diff = Date.now() - new Date(startDate).getTime()
 
@@ -17,35 +17,25 @@ export default function signUpTime(startDate) {
   recap.year = diff
 
   const yearString = () => {
-    if (recap.year > 1) return recap.year + ' ans'
-    if (recap.year === 1) return recap.year + ' an'
+    if (recap.year > 0) return recap.year + ' a'
     return ''
   }
   const monthString = () => {
-    if (recap.month > 0) return recap.month + ' mois'
+    if (recap.month > 0) return recap.month + ' m'
     return ''
   }
 
   const dayString = () => {
-    if (recap.day > 1) return recap.day + ' jours'
-    if (recap.day === 1) return recap.day + ' jour'
+    if (recap.day > 0) return recap.day + ' j'
     return ''
   }
   const hourString = () => {
-    if (recap.hour > 1) return recap.hour + ' heures'
-    if (recap.hour === 1) return recap.hour + ' heure'
+    if (recap.hour > 0) return recap.hour + ' h'
     return ''
   }
   const minString = () => {
-    if (recap.min > 1) return recap.min + ' minutes'
-    if (recap.min === 1) return recap.min + ' minute'
-    return ''
-  }
-  const secString = () => {
-    if (recap.sec > 1) return recap.sec + ' secondes'
-    if (recap.sec === 1) return recap.sec + ' seconde'
-    return ''
+    return recap.min + ' m'
   }
 
-  return `${yearString()} ${monthString()} ${dayString()} ${hourString()} ${minString()} et ${secString()}`
+  return `${yearString()} ${monthString()} ${dayString()} ${hourString()} et ${minString()}`
 }

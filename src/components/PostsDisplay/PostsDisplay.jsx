@@ -3,7 +3,7 @@ import { useContext, useEffect, useState, useRef } from 'react'
 import { UserContext } from '../../utils/context/context'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
-import PostCard from './Post'
+import PostCard from './PostCard'
 import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function PostsDisplay({ data, setData }) {
