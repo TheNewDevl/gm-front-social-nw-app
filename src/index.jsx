@@ -1,14 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { UserProvider } from './utils/context/context'
-import { CommentsProviter } from './utils/context/context'
+import {
+  UserProvider,
+  PostsProvider,
+  AlertProvider,
+} from './utils/context/context'
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
   <UserProvider>
-    <CommentsProviter>
-      <App />
-    </CommentsProviter>
+    <PostsProvider>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </PostsProvider>
   </UserProvider>
 )

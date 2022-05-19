@@ -8,16 +8,19 @@ import {
   IconButton,
 } from '@mui/material'
 import { useContext, useState } from 'react'
-import { UserContext } from '../../utils/context/context'
+import {
+  PostsContext,
+  UserContext,
+  AlertContext,
+} from '../../utils/context/context'
 import DeleteIcon from '@mui/icons-material/Delete'
-import FeedBackAlert from '../Alert/FeedBackAlert'
 
-function DeletePost({ post, data, setData, alertStatus }) {
+function DeletePost({ post }) {
+  const { data, setData } = useContext(PostsContext)
+  const { setAlertStates } = useContext(AlertContext)
   const { user } = useContext(UserContext)
   const [openPopUp, setOpenPopUp] = useState(false)
   const [error, setError] = useState()
-
-  const [openAlert, setOpenAlert] = useState(false)
 
   //Update data state to delete the post from the DOM
   const updateDom = () => {
@@ -41,13 +44,23 @@ function DeletePost({ post, data, setData, alertStatus }) {
       )
       let parsedRes = await response.json()
       if (response.ok) {
-        alertStatus(true)
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Publication supprimée !',
+        })
         updateDom()
       } else {
         setError(parsedRes.message)
-        setOpenAlert(true)
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: { error },
+        })
       }
     } catch (error) {
+      setError(error.message)
+
       console.log(error)
     }
   }
@@ -80,13 +93,6 @@ function DeletePost({ post, data, setData, alertStatus }) {
             </DialogActions>
           </Dialog>
         </div>
-
-        <FeedBackAlert
-          message={error}
-          open={openAlert}
-          setOpenState={setOpenAlert}
-          type="error"
-        />
       </>
     )
   }

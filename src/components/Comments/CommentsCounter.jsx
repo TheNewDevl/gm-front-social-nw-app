@@ -6,7 +6,7 @@ function CommentsCounter({ count, expendCollapse }) {
     <>
       <IconButton onClick={expendCollapse} aria-label="expand comments">
         <ModeCommentIcon color="primary" />
-        <span className="likesCount">{count ? count : ''}</span>
+        <span className="likesCount">{count && count}</span>
       </IconButton>
     </>
   )

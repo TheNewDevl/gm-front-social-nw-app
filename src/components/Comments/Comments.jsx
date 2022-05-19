@@ -3,10 +3,6 @@ import { Typography } from '@mui/material'
 import Loader from '../Loader/Loader'
 
 function Comments({
-  commentAlert,
-  setCommentAlert,
-  commentsCount,
-  setCommentsCount,
   getCommentsfn,
   queryComRefs,
   comments,
@@ -45,16 +41,11 @@ function Comments({
       {isLoading && <Loader />}
       <GetMoreComments />
       {comments &&
-        comments.reverse().map((comment) => (
-          <div>
+        comments.map((comment) => (
+          <div key={comment.id}>
             <CommentCard
-              commentAlert={commentAlert}
-              setCommentAlert={setCommentAlert}
-              commentsCount={commentsCount}
-              setCommentsCount={setCommentsCount}
               comments={comments}
               setDataComment={setDataComment}
-              key={comment.id}
               comment={comment}
             />
           </div>

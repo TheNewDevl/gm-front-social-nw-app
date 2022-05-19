@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useState, useContext, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
@@ -19,7 +19,6 @@ import CommentsCounter from '../Comments/CommentsCounter'
 import { Divider } from '@mui/material'
 import Comments from '../Comments/Comments'
 import { UserContext } from '../../utils/context/context'
-import FeedBackAlert from '../Alert/FeedBackAlert'
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
@@ -32,15 +31,11 @@ const ExpandMore = styled((props) => {
   }),
 }))
 
-export default function PostCard({ setData, data, post, alertStatus }) {
+export default function PostCard({ post }) {
   const [expanded, setExpanded] = React.useState(false)
   //comments state
   const [dataComment, setDataComment] = React.useState([])
-  const [commentsCount, setCommentsCount] = React.useState(undefined)
-  const [commentAlert, setCommentAlert] = React.useState({
-    success: false,
-    fail: false,
-  })
+
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
@@ -48,11 +43,11 @@ export default function PostCard({ setData, data, post, alertStatus }) {
   const date = timeManagement(post.createdAt)
 
   /*********** LOGIQUE DE RECUPERATION DES COMMENTAIRES A REPLACER */
-  const { user } = React.useContext(UserContext)
-  const [error, setError] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const queryComRefs = React.useRef({
-    limit: 1,
+  const { user } = useContext(UserContext)
+  const [error, setError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const queryComRefs = useRef({
+    limit: 5,
     offset: 0,
     count: 0,
   })
@@ -68,8 +63,7 @@ export default function PostCard({ setData, data, post, alertStatus }) {
       })
       const parsedRes = await res.json()
       if (res.ok) {
-        setDataComment((data) => [...data, ...parsedRes[0]])
-        setCommentsCount(parsedRes[1])
+        setDataComment((data) => [...data, ...parsedRes[0].reverse()])
         queryComRefs.current.count = parsedRes[1]
       } else {
         setError(parsedRes.message)
@@ -79,17 +73,16 @@ export default function PostCard({ setData, data, post, alertStatus }) {
     } finally {
       setIsLoading(false)
       queryComRefs.current.offset += queryComRefs.current.limit
-      queryComRefs.current.limit = 5
     }
   }
   /**************** LOGIQUE DE RECUPERATION DES COMMENTAIRES A REPLACER */
 
   //get comments
   React.useEffect(() => {
-    if (post.id && queryComRefs.current.offset === 0) {
+    if (expanded && queryComRefs.current.offset === 0) {
       getComments()
     }
-  }, [])
+  }, [expanded])
 
   return (
     <Card data-id={post.id} className="post">
@@ -99,22 +92,12 @@ export default function PostCard({ setData, data, post, alertStatus }) {
             src={post.user.profile && post.user.profile.photo}
             alt={`Photo de profil de ${post.user.username}`}
             aria-label="post"
-          ></Avatar>
+          />
         }
         action={
           <>
-            <DeletePost
-              alertStatus={alertStatus}
-              setData={setData}
-              data={data}
-              post={post}
-            />
-            <UpdatePost
-              alertStatus={alertStatus}
-              setData={setData}
-              data={data}
-              post={post}
-            />
+            <DeletePost post={post} />
+            <UpdatePost post={post} />
           </>
         }
         titleTypographyProps={{
@@ -139,9 +122,9 @@ export default function PostCard({ setData, data, post, alertStatus }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <LikesManagement post={post} data={data} setData={setData} />
+        <LikesManagement post={post} />
         <CommentsCounter
-          count={commentsCount}
+          count={post.commentsCount}
           expendCollapse={handleExpandClick}
         />
 
@@ -159,10 +142,6 @@ export default function PostCard({ setData, data, post, alertStatus }) {
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Comments
-          commentAlert={commentAlert}
-          setCommentAlert={setCommentAlert}
-          commentsCount={commentsCount}
-          setCommentsCount={setCommentsCount}
           queryComRefs={queryComRefs}
           getCommentsfn={getComments}
           comments={dataComment}
@@ -171,16 +150,11 @@ export default function PostCard({ setData, data, post, alertStatus }) {
           error={error}
         />
         <CreateComment
-          setCommentAlert={setCommentAlert}
-          commentsCount={commentsCount}
-          setCommentsCount={setCommentsCount}
           dataComment={dataComment}
           setDataComment={setDataComment}
-          postId={post.id}
+          post={post}
         />
       </Collapse>
-
-      <FeedBackAlert />
     </Card>
   )
 }

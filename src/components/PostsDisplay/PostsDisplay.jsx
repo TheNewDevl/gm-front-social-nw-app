@@ -1,13 +1,14 @@
 import Loader from '../Loader/Loader'
 import { useContext, useEffect, useState, useRef } from 'react'
-import { UserContext } from '../../utils/context/context'
+import { PostsContext, UserContext } from '../../utils/context/context'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
 import PostCard from './PostCard'
-import FeedBackAlert from '../Alert/FeedBackAlert'
 
-function PostsDisplay({ data, setData }) {
+function PostsDisplay() {
+  const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
+
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const queryRefs = useRef({
@@ -15,9 +16,6 @@ function PostsDisplay({ data, setData }) {
     offset: 0,
     count: 0,
   })
-
-  //alert
-  const [open, setOpen] = useState(false)
 
   //get posts with pagination with uploading offset while scrolling the page
   const loadPosts = async () => {
@@ -92,23 +90,8 @@ function PostsDisplay({ data, setData }) {
   }
   return (
     <div>
-      {data &&
-        data.map((post) => (
-          <PostCard
-            alertStatus={setOpen}
-            setData={setData}
-            data={data}
-            key={post.id}
-            post={post}
-          />
-        ))}
+      {data && data.map((post) => <PostCard key={post.id} post={post} />)}
       {isLoading && <Loader />}
-      <FeedBackAlert
-        open={open}
-        message="Publication supprimée"
-        setOpenState={setOpen}
-        type="success"
-      />
     </div>
   )
 }

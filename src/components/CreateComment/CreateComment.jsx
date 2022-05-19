@@ -6,23 +6,14 @@ import {
 } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import { useContext, useState } from 'react'
-import { UserContext } from '../../utils/context/context'
-import FeedBackAlert from '../Alert/FeedBackAlert'
+import { AlertContext, UserContext } from '../../utils/context/context'
 
-function CreateComment({
-  commentsCount,
-  setCommentsCount,
-  postId,
-  dataComment,
-  setDataComment,
-}) {
+function CreateComment({ post, dataComment, setDataComment }) {
   const { user } = useContext(UserContext)
+  const { setAlertStates } = useContext(AlertContext)
   const [input, setInput] = useState()
   const [loading, setLoading] = useState(false)
-  const [openAlert, setOpenAlert] = useState({
-    success: false,
-    fail: false,
-  })
+
   const [error, setError] = useState(false)
 
   //will update comments state array to render the new comment
@@ -30,7 +21,7 @@ function CreateComment({
     const oldArray = [...dataComment]
     oldArray.unshift(newComment)
     setDataComment(oldArray)
-    setCommentsCount(commentsCount + 1)
+    post.commentsCount += 1
   }
 
   //post Request
@@ -41,7 +32,7 @@ function CreateComment({
       const res = await fetch(process.env.REACT_APP_BASE_URL_API + 'comment', {
         method: 'POST',
 
-        body: JSON.stringify({ postId, text: input }),
+        body: JSON.stringify({ postId: post.id, text: input }),
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.user.token}`,
@@ -51,16 +42,28 @@ function CreateComment({
 
       if (res.ok) {
         setInput('')
-        setOpenAlert({ success: true })
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Enregistré !',
+        })
         updateDom(parsedRes)
       } else {
         setError(parsedRes.message)
-        setOpenAlert({ fail: true })
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: `${parsedRes.message}`,
+        })
       }
     } catch (error) {
       console.log(error)
       setError(error.message)
-      setOpenAlert({ fail: true })
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: { error },
+      })
     } finally {
       setLoading(false)
     }
@@ -95,12 +98,6 @@ function CreateComment({
           </>
         )}
       </Button>
-      <FeedBackAlert
-        message={openAlert.success ? 'Enregistré !' : `${error}`}
-        open={openAlert.success || openAlert.fail}
-        setOpenState={setOpenAlert}
-        type={openAlert.success ? 'success' : 'error'}
-      />
     </>
   )
 }

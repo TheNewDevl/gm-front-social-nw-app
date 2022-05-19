@@ -5,14 +5,21 @@ import {
   AccordionDetails,
 } from '@mui/material'
 import React, { useContext, useState, useEffect } from 'react'
-import { UserContext } from '../../utils/context/context'
+import {
+  AlertContext,
+  PostsContext,
+  UserContext,
+} from '../../utils/context/context'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
-import FeedBackAlert from '../Alert/FeedBackAlert'
 import PostForm from '../PostForm/PostForm'
 
-function CreatePost({ data, setData }) {
+function CreatePost() {
   const { user } = useContext(UserContext)
+  const { setAlertStates } = useContext(AlertContext)
+
+  const { data, setData } = useContext(PostsContext)
+
   const [inputs, setInputs] = useState({
     text: '',
     file: '',
@@ -20,9 +27,6 @@ function CreatePost({ data, setData }) {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
-
-  //handle snackbar close
-  const [open, setOpen] = useState(false)
 
   //Accordion state
   const [expanded, setExpanded] = useState(false)
@@ -62,19 +66,34 @@ function CreatePost({ data, setData }) {
           Authorization: `Bearer ${user.user.token}`,
         },
       })
+      const parsedRespose = await response.json()
       if (response.ok) {
+        updateData(parsedRespose.post)
         setInputs({
           text: '',
           file: '',
           urlForPreview: null,
         })
-        setOpen(true)
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Publication enregistrée !',
+        })
+      } else {
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: `${parsedRespose.message}`,
+        })
       }
-      const parsedRespose = await response.json()
-      updateData(parsedRespose.post)
     } catch (error) {
       console.log(error)
       setError(error.message)
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: { error },
+      })
     } finally {
       setLoading(false)
     }
@@ -108,12 +127,6 @@ function CreatePost({ data, setData }) {
           />
         </AccordionDetails>
       </Accordion>
-      <FeedBackAlert
-        open={open}
-        message="Publication enregistrée"
-        setOpenState={setOpen}
-        type="success"
-      />
     </>
   )
 }

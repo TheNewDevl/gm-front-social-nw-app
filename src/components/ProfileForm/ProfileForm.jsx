@@ -12,13 +12,12 @@ import {
 } from '@mui/material'
 
 import { useContext } from 'react'
-import { UserContext } from '../../utils/context/context'
+import { AlertContext, UserContext } from '../../utils/context/context'
 import './ProfileForm.scss'
 
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
-import FeedBackAlert from '../Alert/FeedBackAlert'
 
 function ProfileForm({ method, uri = '' }) {
   const [profileInputs, setprofileInputs] = useState({
@@ -34,7 +33,7 @@ function ProfileForm({ method, uri = '' }) {
   const [loading, setLoading] = useState(false)
   const [formErrors] = useState({})
   const { user, setHasProfile } = useContext(UserContext)
-  const [successAlert, setSuccessAlert] = useState(false)
+  const { setAlertStates } = useContext(AlertContext)
 
   //if the profile has already been created, the fields are pre-filled with the profile data
   const { data, isLoading } = useFetch(`profile/${user.user.id}`)
@@ -89,7 +88,13 @@ function ProfileForm({ method, uri = '' }) {
       }
 
       //set success alert if res ok
-      if (response.ok) setSuccessAlert(true)
+      if (response.ok) {
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Modifications enregistrées !',
+        })
+      }
     } catch (error) {
       console.log(error)
       setError(error)
@@ -198,13 +203,6 @@ function ProfileForm({ method, uri = '' }) {
           >
             {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
           </Button>
-
-          <FeedBackAlert
-            message="Modifications enregistrées !"
-            open={successAlert}
-            setOpenState={setSuccessAlert}
-            type="success"
-          />
         </Box>
       )}
     </>

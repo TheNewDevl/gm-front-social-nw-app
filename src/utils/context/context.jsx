@@ -19,25 +19,39 @@ export const UserProvider = ({ children }) => {
   )
 }
 
-//comments
-export const CommentsContext = createContext()
+//Posts context
+export const PostsContext = createContext()
+export const PostsProvider = ({ children }) => {
+  const [data, setPostData] = useState([])
 
-export const CommentsProviter = ({ children }) => {
-  const [dataComment, setDataCommentState] = React.useState([])
-  const [commentsCount, setCommentsCountState] = React.useState(undefined)
-
-  const setDataComment = (data) => {
-    setDataCommentState(data)
+  const setData = (posts) => {
+    setPostData(posts)
   }
 
-  const setCommentsCount = (data) => {
-    setCommentsCountState(data)
-  }
   return (
-    <CommentsContext.Provider
-      value={{ dataComment, setDataComment, commentsCount, setCommentsCount }}
-    >
+    <PostsContext.Provider value={{ data, setData }}>
       {children}
-    </CommentsContext.Provider>
+    </PostsContext.Provider>
+  )
+}
+
+//FeedBack alert context
+
+export const AlertContext = createContext()
+export const AlertProvider = ({ children }) => {
+  const [alertStates, setOpenAlertState] = useState({
+    open: false,
+    type: '',
+    message: '',
+  })
+
+  const setAlertStates = (boolist) => {
+    setOpenAlertState(boolist)
+  }
+
+  return (
+    <AlertContext.Provider value={{ alertStates, setAlertStates }}>
+      {children}
+    </AlertContext.Provider>
   )
 }

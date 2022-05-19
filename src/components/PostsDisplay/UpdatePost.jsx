@@ -8,17 +8,19 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import { useContext, useState, useEffect } from 'react'
-import { UserContext } from '../../utils/context/context'
-import FeedBackAlert from '../Alert/FeedBackAlert'
+import {
+  AlertContext,
+  PostsContext,
+  UserContext,
+} from '../../utils/context/context'
 import PostForm from '../PostForm/PostForm'
 
-function UpdatePost({ post, data, setData }) {
+function UpdatePost({ post }) {
+  const { setAlertStates } = useContext(AlertContext)
+  const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
+
   const [openDialog, setOpenDialog] = useState(false)
-  const [openAlert, setOpenAlert] = useState({
-    success: false,
-    fail: false,
-  })
 
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -29,14 +31,14 @@ function UpdatePost({ post, data, setData }) {
     urlForPreview: null,
   })
 
-  useEffect((post) => {
+  useEffect(() => {
     if (post)
       setUpdateInputs({
         text: post.text,
         file: '',
         urlForPreview: post.image,
       })
-  }, [])
+  }, [post])
 
   //update Request
   const handleSubmit = async (e) => {
@@ -65,17 +67,29 @@ function UpdatePost({ post, data, setData }) {
           urlForPreview: null,
         })
         setOpenDialog(false)
-        setOpenAlert({ success: true })
-
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Modifications enregistrées !',
+        })
         updateDom(updatedPost)
       } else {
-        setOpenAlert({ fail: true })
         setError(updatedPost.message)
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: `${updatedPost.message}`,
+        })
       }
     } catch (error) {
       console.log(error)
       setError(error.message)
-      setOpenAlert({ fail: true })
+
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: { error },
+      })
     } finally {
       setLoading(false)
     }
@@ -117,18 +131,6 @@ function UpdatePost({ post, data, setData }) {
             </DialogActions>
           </Dialog>
         </div>
-        <FeedBackAlert
-          message="Modifications enregistrées !"
-          open={openAlert.success}
-          setOpenState={setOpenAlert}
-          type="success"
-        />
-        <FeedBackAlert
-          message={error}
-          open={openAlert.fail}
-          setOpenState={setOpenAlert}
-          type="error"
-        />
       </>
     )
   }

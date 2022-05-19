@@ -1,18 +1,20 @@
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { IconButton } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import { UserContext } from '../../utils/context/context'
-import FeedBackAlert from '../Alert/FeedBackAlert'
+import {
+  AlertContext,
+  PostsContext,
+  UserContext,
+} from '../../utils/context/context'
 
-function LikesManagement({ post, data, setData }) {
+function LikesManagement({ post }) {
+  const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
+  const { setAlertStates } = useContext(AlertContext)
+
   const [likesCount, setLikesCount] = useState(0)
   const [error, setError] = useState()
-  const [openAlert, setOpenAlert] = useState({
-    success: false,
-    fail: false,
-    dislike: false,
-  })
+
   //display number of likes per post
   useEffect(() => {
     if (post) {
@@ -29,11 +31,19 @@ function LikesManagement({ post, data, setData }) {
     if (type === 'unlike') {
       const endLikes = startLikes.filter((p) => p.id !== user.user.id)
       oldData[index].likes = endLikes
-      setOpenAlert({ dislike: true })
+      setAlertStates({
+        open: true,
+        type: 'info',
+        message: `${post.user.username} est triste que vous n'aimiez plus son post !`,
+      })
     } else {
       startLikes.push({ id: user.user.id })
       oldData[index].likes = startLikes
-      setOpenAlert({ success: true })
+      setAlertStates({
+        open: true,
+        type: 'success',
+        message: `${post.user.username} vous remercie !`,
+      })
     }
     //update state
     setData(oldData)
@@ -61,8 +71,12 @@ function LikesManagement({ post, data, setData }) {
         console.log(res)
       }
     } catch (error) {
-      setError(error)
-      setOpenAlert({ fail: true })
+      setError(error.message)
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: { error },
+      })
       console.log(error)
     }
   }
@@ -75,22 +89,6 @@ function LikesManagement({ post, data, setData }) {
         />
         <span className="likesCount">{likesCount}</span>
       </IconButton>
-      <FeedBackAlert
-        message={
-          openAlert.success
-            ? `${post.user.username} vous remercie !`
-            : `${post.user.username} est triste que vous n'aimiez plus son post !`
-        }
-        open={openAlert.success || openAlert.dislike}
-        setOpenState={setOpenAlert}
-        type={openAlert.success ? 'success' : 'info'}
-      />
-      <FeedBackAlert
-        message={error}
-        open={openAlert.fail}
-        setOpenState={setOpenAlert}
-        type="error"
-      />
     </>
   )
 }

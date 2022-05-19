@@ -6,35 +6,23 @@ import {
   TextareaAutosize,
 } from '@mui/material'
 import { useContext, useState } from 'react'
-import { UserContext } from '../../utils/context/context'
 import {
-  DialogTitle,
-  IconButton,
-  DialogActions,
-  DialogContent,
-} from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
+  AlertContext,
+  PostsContext,
+  UserContext,
+} from '../../utils/context/context'
+import { DialogTitle, DialogActions, DialogContent } from '@mui/material'
 import { useEffect } from 'react'
-import FeedBackAlert from '../Alert/FeedBackAlert'
-import PostForm from '../PostForm/PostForm'
 import SendIcon from '@mui/icons-material/Send'
 
-function CommentActions({
-  commentAlert,
-  setCommentAlert,
-  commentsCount,
-  setCommentsCount,
-  comments,
-  setDataComment,
-  comment,
-  userId,
-}) {
+function CommentActions({ comments, setDataComment, comment, userId }) {
   const { user } = useContext(UserContext)
+  const { data } = useContext(PostsContext)
+  const { setAlertStates } = useContext(AlertContext)
   const [error, setError] = useState()
   const [openDialog, setOpenDialog] = useState(false)
   const [input, setInput] = useState()
   const [isLoading, setIsLoading] = useState(false)
-
   useEffect(() => {
     if (comment) setInput(comment.text)
   }, [])
@@ -65,14 +53,28 @@ function CommentActions({
       let parsedRes = await response.json()
       if (response.ok) {
         setOpenDialog(false)
-        //alertStatus(true)
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Modification enregistrée !',
+        })
         updateDom(parsedRes)
       } else {
         setError(parsedRes.message)
-        //setOpenAlert(true)
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: `${parsedRes.message}`,
+        })
       }
-    } catch (error) {
-      console.log(error)
+    } catch (e) {
+      setError(e.message)
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: { error },
+      })
+      console.log(e)
     } finally {
       setIsLoading(false)
     }
@@ -82,10 +84,11 @@ function CommentActions({
     const oldData = [...comments]
     const newData = oldData.filter((c) => c.id !== comment.id)
     setDataComment(newData)
-    setCommentsCount(commentsCount - 1)
+    // retrive index to update the post commments counter
+    const index = data.findIndex((p) => p.id === comment.post.id)
+    data[index].commentsCount -= 1
   }
   const handleDelete = async () => {
-    console.log(comment.id)
     try {
       const response = await fetch(
         `http://localhost:3000/api/comment/${comment.id}`,
@@ -98,14 +101,28 @@ function CommentActions({
       )
       let parsedRes = await response.json()
       if (response.ok) {
-        //alertStatus(true)
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Ok, Commentaire supprimé !',
+        })
         deleteDom()
       } else {
         setError(parsedRes.message)
-        //setOpenAlert(true)
+        setAlertStates({
+          open: true,
+          type: 'error',
+          message: `${parsedRes.message}`,
+        })
       }
-    } catch (error) {
-      console.log(error)
+    } catch (e) {
+      setError(e.message)
+      setAlertStates({
+        open: true,
+        type: 'success',
+        message: { error },
+      })
+      console.log(e)
     }
   }
 

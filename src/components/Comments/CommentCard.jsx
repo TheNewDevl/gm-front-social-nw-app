@@ -4,10 +4,6 @@ import timeManagement from '../../pages/Profile/AccountDetails/time-management'
 import CommentActions from './CommentActions'
 
 function CommentCard({
-  commentAlert,
-  setCommentAlert,
-  commentsCount,
-  setCommentsCount,
   comments,
   setDataComment,
   comment,
@@ -31,10 +27,6 @@ function CommentCard({
         <div className="comment__actions">
           <p className="comment__content--time">{time}</p>
           <CommentActions
-            commentAlert={commentAlert}
-            setCommentAlert={setCommentAlert}
-            commentsCount={commentsCount}
-            setCommentsCount={setCommentsCount}
             comments={comments}
             setDataComment={setDataComment}
             comment={comment}

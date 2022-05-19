@@ -12,9 +12,11 @@ import { useContext } from 'react'
 import { UserContext } from './utils/context/context'
 import Header from './components/Header/Header'
 import './App.scss'
+import FeedBackAlert from './components/Alert/TestAlert'
 
 function App() {
   const { user, setUser, setHasProfile } = useContext(UserContext)
+
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
   useEffect(() => {
     const local = sessionStorage.getItem('user')
@@ -40,6 +42,8 @@ function App() {
       <BrowserRouter>
         <CssBaseline />
         <Header />
+        <FeedBackAlert />
+
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route element={<ProtectedRoute />}>
