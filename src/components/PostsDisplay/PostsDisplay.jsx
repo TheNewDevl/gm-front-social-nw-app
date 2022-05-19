@@ -74,9 +74,9 @@ function PostsDisplay() {
   useEffect(() => {
     loadPosts()
     window.addEventListener('scroll', handleScroll)
-
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      setData([])
     }
   }, [])
 

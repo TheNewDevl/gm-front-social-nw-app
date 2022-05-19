@@ -16,13 +16,13 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 10px;
+  padding: 0 10px;
 }
 
 .HomeIcon {
   color: $tertiary;
   &:hover {
-    transition: all 0.1s ease-in-out;
-    transform: scale(1.5);
+    transition: all 0.3s ease-in-out;
+    transform: scale(1.1);
   }
 }

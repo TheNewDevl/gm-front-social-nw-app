@@ -79,9 +79,6 @@ export function useFetch(uri) {
   const [error, setError] = useState(false)
   const { user } = useContext(UserContext)
 
-  /*  const local = JSON.parse(sessionStorage.getItem('user'))
-  const token = local.user.token */
-
   useEffect(() => {
     if (!uri) throw new Error('You must specify an url')
     setLoading(true)
@@ -95,6 +92,7 @@ export function useFetch(uri) {
         })
         const data = await response.json()
         setData(data)
+        setError(false)
       } catch (error) {
         console.log(error)
         setError(true)
@@ -102,7 +100,9 @@ export function useFetch(uri) {
         setLoading(false)
       }
     }
-    fetchData()
+    if (user) {
+      fetchData()
+    }
   }, [uri])
 
   return { isLoading, data, error }
