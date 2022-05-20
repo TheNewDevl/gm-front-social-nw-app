@@ -44,40 +44,53 @@ function Header() {
           {/* ///////////NAV////////// */}
           {(user && user.user.hasProfile === 1) ||
           (user && hasProfile === '1') ? (
-            <Box
-              component="nav"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                textAlign: 'center',
-              }}
-            >
-              <Tab
-                component={Link}
-                textColor="#fff"
-                sx={{ p: 0, mr: '-30px' }}
-                to="/"
-                title="Accueil"
-                label={<HomeIcon className="HomeIcon" fontSize="large" />}
+            error ? (
+              <span>Une erreur s'est produite</span>
+            ) : isLoading ? (
+              <Loader
+                style={{
+                  margin: 'initial',
+                  marginRight: '1em',
+                  borderWidth: '2px',
+                }}
+                color="white"
               />
+            ) : (
+              <Box
+                component="nav"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <Tab
+                  component={Link}
+                  textColor="#fff"
+                  sx={{ p: 0, mr: '-30px' }}
+                  to="/"
+                  title="Accueil"
+                  label={<HomeIcon className="HomeIcon" fontSize="large" />}
+                />
 
-              <Tooltip title="Account settings">
-                <IconButton
-                  onClick={handleClick}
-                  size="small"
-                  sx={{ ml: 2 }}
-                  aria-controls={open ? 'account-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                >
-                  <Avatar
-                    src={data && data.photo}
-                    alt="Photo de profil"
-                    sx={{ width: 32, height: 32 }}
-                  />
-                </IconButton>
-              </Tooltip>
-            </Box>
+                <Tooltip title="Account settings">
+                  <IconButton
+                    onClick={handleClick}
+                    size="small"
+                    sx={{ ml: 2 }}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                  >
+                    <Avatar
+                      src={data && data.photo}
+                      alt="Photo de profil"
+                      sx={{ width: 32, height: 32 }}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )
           ) : null}
 
           {/* /////////MENU////////// */}

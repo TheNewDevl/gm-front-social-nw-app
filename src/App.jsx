@@ -11,6 +11,7 @@ import { blue } from '@mui/material/colors'
 import { useContext } from 'react'
 import { UserContext } from './utils/context/context'
 import Header from './components/Header/Header'
+import Footer from './components/Footer/Footer'
 import './App.scss'
 import FeedBackAlert from './components/Alert/TestAlert'
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="/profile/interactions" element={<Interactions />} />
           </Route>
         </Routes>
+        <Footer />
       </BrowserRouter>
     </ThemeProvider>
   )
