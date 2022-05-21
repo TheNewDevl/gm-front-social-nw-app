@@ -9,7 +9,7 @@ function TransitionLeft(props) {
 }
 
 const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+  return <MuiAlert elevation={6} ref={ref} variant="standard" {...props} />
 })
 
 function FeedBackAlert() {
@@ -37,7 +37,7 @@ function FeedBackAlert() {
       <Alert
         onClose={handleClose}
         severity={alertStates.type}
-        sx={{ width: '100%' }}
+        sx={{ width: '100%', mb: '50px' }}
       >
         {alertStates.message}
       </Alert>

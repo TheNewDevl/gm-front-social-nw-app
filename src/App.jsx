@@ -9,7 +9,7 @@ import ProtectedRoute from './auth/ProtectedRoute'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { blue } from '@mui/material/colors'
 import { useContext } from 'react'
-import { UserContext } from './utils/context/context'
+import { DarkModeContext, UserContext } from './utils/context/context'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import './App.scss'
@@ -17,6 +17,7 @@ import FeedBackAlert from './components/Alert/TestAlert'
 
 function App() {
   const { user, setUser, setHasProfile } = useContext(UserContext)
+  const { mode } = useContext(DarkModeContext)
 
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
   useEffect(() => {
@@ -34,6 +35,7 @@ function App() {
 
   const theme = createTheme({
     palette: {
+      mode,
       primary: blue,
     },
   })

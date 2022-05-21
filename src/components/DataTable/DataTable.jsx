@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper'
 export default function DataTable({ displayData }) {
   console.log(displayData)
   return (
-    <TableContainer className="seftAccount__table" component={Paper}>
+    <TableContainer sx={{ mt: '2em' }} component={Paper}>
       <Table aria-label="profile and account details">
         <TableBody>
           {displayData &&

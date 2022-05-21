@@ -55,3 +55,20 @@ export const AlertProvider = ({ children }) => {
     </AlertContext.Provider>
   )
 }
+
+//dark mode context
+
+export const DarkModeContext = createContext()
+export const DarkModeProvider = ({ children }) => {
+  const [mode, setModeState] = useState('light')
+
+  const setDarkMode = (boolist) => {
+    setModeState(boolist)
+  }
+
+  return (
+    <DarkModeContext.Provider value={{ mode, setDarkMode }}>
+      {children}
+    </DarkModeContext.Provider>
+  )
+}
