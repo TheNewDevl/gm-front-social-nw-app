@@ -1,13 +1,9 @@
-import { Avatar, Button } from '@mui/material'
+import { Avatar } from '@mui/material'
 import './CommentCard.scss'
-import timeManagement from '../../pages/Profile/AccountDetails/time-management'
+import timeManagement from '../../utils/time-management'
 import CommentActions from './CommentActions'
 
-function CommentCard({
-  comments,
-  setDataComment,
-  comment,
-}) {
+function CommentCard({ comments, setDataComment, comment }) {
   const time = timeManagement(comment.createdAt)
   return (
     <div data-id={comment.id} className="comment">

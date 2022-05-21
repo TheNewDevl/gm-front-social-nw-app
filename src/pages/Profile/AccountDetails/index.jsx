@@ -5,14 +5,9 @@ import { useFetch } from '../../../utils/hooks/custom.hooks'
 import Loader from '../../../components/Loader/Loader'
 import './AccountDetails.scss'
 import * as React from 'react'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
 import PopUp from '../../../components/PopUp/PopUp'
-import signUpTime from './time-management'
+import signUpTime from '../../../utils/time-management'
+import DataTable from '../../../components/DataTable/DataTable'
 
 function AccountDetails() {
   const { user, setUser } = useContext(UserContext)
@@ -85,21 +80,8 @@ function AccountDetails() {
         <Loader />
       ) : (
         <>
-          <TableContainer className="seftAccount__table" component={Paper}>
-            <Table aria-label="account details">
-              <TableBody>
-                {displayData &&
-                  displayData.map((entry) => {
-                    return (
-                      <TableRow key={entry.label}>
-                        <TableCell>{entry.label}</TableCell>
-                        <TableCell>{entry.value}</TableCell>
-                      </TableRow>
-                    )
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <DataTable displayData={displayData} />
+
           <Button
             fullWidth
             variant="contained"

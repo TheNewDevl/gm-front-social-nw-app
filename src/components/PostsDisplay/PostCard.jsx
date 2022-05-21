@@ -12,13 +12,14 @@ import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DeletePost from './DeletePost'
 import UpdatePost from './UpdatePost'
-import timeManagement from '../../pages/Profile/AccountDetails/time-management'
+import timeManagement from '../../utils/time-management'
 import LikesManagement from './LikesManagement'
 import CreateComment from '../CreateComment/CreateComment'
 import CommentsCounter from '../Comments/CommentsCounter'
 import { Divider } from '@mui/material'
 import Comments from '../Comments/Comments'
 import { UserContext } from '../../utils/context/context'
+import ProfilesDiag from '../ProfileDiag/ProfileDiag'
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props
@@ -41,6 +42,17 @@ export default function PostCard({ post }) {
   }
 
   const date = timeManagement(post.createdAt)
+
+  // profiles diag
+  const [openProfilesDiag, setOpenProfilesDiag] = React.useState(false)
+
+  const handleClickOpen = () => {
+    setOpenProfilesDiag(true)
+  }
+
+  const handleClose = () => {
+    setOpenProfilesDiag(false)
+  }
 
   /*********** LOGIQUE DE RECUPERATION DES COMMENTAIRES A REPLACER */
   const { user } = useContext(UserContext)
@@ -100,12 +112,22 @@ export default function PostCard({ post }) {
             <UpdatePost post={post} />
           </>
         }
-        titleTypographyProps={{
-          color: 'primary',
-          fontWeight: 'fontWeightBold',
-          variant: 'body1',
-        }}
-        title={`@${post.user.username}`}
+        title={
+          <Typography
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+            color="primary"
+            fontWeight="fontWeightBold"
+            variant="body1"
+            component="a"
+            onClick={handleClickOpen}
+            title={`Consulter le profil de ${post.user.username} `}
+          >{`@${post.user.username}`}</Typography>
+        }
         subheader={date}
       />
       {post.image && (
@@ -155,6 +177,13 @@ export default function PostCard({ post }) {
           post={post}
         />
       </Collapse>
+      {openProfilesDiag && (
+        <ProfilesDiag
+          open={openProfilesDiag}
+          handleClose={handleClose}
+          userId={post.user.id}
+        />
+      )}
     </Card>
   )
 }
