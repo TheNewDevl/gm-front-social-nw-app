@@ -1,23 +1,23 @@
-import React, { useEffect } from 'react'
-import AuthPage from './pages/AuthPage/AuthPage'
+import React, { useEffect, useContext } from 'react'
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import AuthPage from './pages/AuthPage/AuthPage'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
 import Interactions from './pages/Interactions/Interactions'
-import { CssBaseline } from '@mui/material'
 import ProtectedRoute from './auth/ProtectedRoute'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { blue } from '@mui/material/colors'
-import { useContext } from 'react'
-import { DarkModeContext, UserContext } from './utils/context/context'
+
+import { CssBaseline } from '@mui/material'
+import { ThemeProvider } from '@mui/material/styles'
+import { UserContext } from './utils/context/context'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
-import './App.scss'
 import FeedBackAlert from './components/Alert/TestAlert'
+import { Themes } from './styles/themes'
 
 function App() {
   const { user, setUser, setHasProfile } = useContext(UserContext)
-  const { mode } = useContext(DarkModeContext)
 
   //Retrieve user information from local storage and pass it to user state. it avoids a reconnection in case of accidental reload for example
   useEffect(() => {
@@ -33,15 +33,8 @@ function App() {
     user && sessionStorage.setItem('user', JSON.stringify(user))
   }, [user])
 
-  const theme = createTheme({
-    palette: {
-      mode,
-      primary: blue,
-    },
-  })
-
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={Themes.customTheme()}>
       <BrowserRouter>
         <CssBaseline />
         <Header />

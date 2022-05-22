@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
-import { AppBar, Tab, Tabs } from '@mui/material'
+import { AppBar, Tab } from '@mui/material'
 import LogoPng from '../../assets/icon-left-font-monochrome-white.svg'
 import { UserContext } from '../../utils/context/context'
 import { useFetch } from '../../utils/hooks/custom.hooks'
@@ -70,6 +70,7 @@ function Header() {
                   sx={{ p: 0, mr: '-30px' }}
                   to="/"
                   title="Accueil"
+                  role="link"
                   label={<HomeIcon className="HomeIcon" fontSize="large" />}
                 />
 

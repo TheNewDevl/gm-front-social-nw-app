@@ -14,7 +14,7 @@ function CreateComment({ post, dataComment, setDataComment }) {
   const [input, setInput] = useState()
   const [loading, setLoading] = useState(false)
 
-  const [error, setError] = useState(false)
+  const [, /* error */ setError] = useState(false)
 
   //will update comments state array to render the new comment
   const updateDom = (newComment) => {

@@ -11,13 +11,18 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  useTheme,
 } from '@mui/material'
 import { useContext } from 'react'
 import { UserContext } from '../../utils/context/context'
 import ProfileForm from '../../components/ProfileForm/ProfileForm'
 
+import homeIllustration from '../../assets/home-illustration.jpg'
+import darkHomeIllustration from '../../assets/darkmode-home-illustration.jpg'
+
 function Home() {
   const { user, hasProfile } = useContext(UserContext)
+  const theme = useTheme()
   //used to display sign up or login form
   const [hasAccount, setHasAccount] = useState(false)
 
@@ -34,7 +39,10 @@ function Home() {
         sm={4}
         md={7}
         sx={{
-          backgroundImage: `url(https://cdn.pixabay.com/photo/2015/03/11/12/31/buildings-668616_960_720.jpg)`,
+          backgroundImage:
+            theme.palette.mode === 'light'
+              ? `url(${homeIllustration})`
+              : `url(${darkHomeIllustration})`,
           backgroundRepeat: 'no-repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light'

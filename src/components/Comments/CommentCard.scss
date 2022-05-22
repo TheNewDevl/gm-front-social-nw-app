@@ -36,7 +36,7 @@
   }
 }
 .comments__container {
-  //max-height: 50vh;
-  overflow: scroll;
-  scroll-behavior: smooth;
+  max-height: 50vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }

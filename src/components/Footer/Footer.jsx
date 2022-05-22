@@ -5,8 +5,8 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import { Box } from '@mui/system'
-import { useTheme } from '@mui/material'
 import { DarkModeContext } from '../../utils/context/context'
+import { useTheme } from '@mui/material'
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 70,
@@ -56,10 +56,9 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 function Footer() {
-  const theme = useTheme()
-  const { setDarkMode } = useContext(DarkModeContext)
   const [isChecked, setIsChecked] = useState(false)
-
+  const { setDarkMode } = useContext(DarkModeContext)
+  const theme = useTheme()
   //footer actual time
   const [date, setDate] = useState('')
   setInterval(() => {
@@ -68,12 +67,8 @@ function Footer() {
 
   // set dark mode state depending on the toggle value
   useEffect(() => {
-    if (isChecked) {
-      setDarkMode('dark')
-    }
-    if (!isChecked) {
-      setDarkMode('light')
-    }
+    isChecked ? setDarkMode('dark') : setDarkMode('light')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isChecked])
 
   return (
@@ -84,8 +79,7 @@ function Footer() {
       }}
       component="footer"
       width="100vw"
-      boxShadow=" 0px -2px 4px -1px rgb(0 0 0 / 20%),
-    0px -4px 5px 0px rgb(0 0 0 / 14%), 0px -1px 10px 0px rgb(0 0 0 / 12%)"
+      boxShadow={theme.footerShadow}
       bottom="0"
       left="0"
       position="fixed"
@@ -106,6 +100,7 @@ function Footer() {
 
         <FormGroup>
           <FormControlLabel
+            aria-label="Switch light or dark mode theme"
             sx={{ m: '5px 0', color: '#fff' }}
             control={
               <MaterialUISwitch
@@ -114,6 +109,7 @@ function Footer() {
                 checked={isChecked}
               />
             }
+            label="Theme"
           />
         </FormGroup>
       </Box>

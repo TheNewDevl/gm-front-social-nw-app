@@ -123,7 +123,7 @@ export default function PostCard({ post }) {
             color="primary"
             fontWeight="fontWeightBold"
             variant="body1"
-            component="a"
+            component="p"
             onClick={handleClickOpen}
             title={`Consulter le profil de ${post.user.username} `}
           >{`@${post.user.username}`}</Typography>

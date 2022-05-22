@@ -41,19 +41,18 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
     <form onSubmit={handleSubmit}>
       <Typography component="label" variant="overline" htmlFor="text">
         Une anecdote ? Une info à partager ? Une photo ? C'est par ici !
+        <TextareaAutosize
+          className="bio__input"
+          required
+          minRows={7}
+          maxRows={20}
+          name="text"
+          aria-label="saisie du contenu textuel"
+          value={inputs.text}
+          onChange={handleText}
+          placeholder="Ecrivez quelque chose"
+        />
       </Typography>
-      <TextareaAutosize
-        className="bio__input"
-        required
-        minRows={7}
-        maxRows={20}
-        name="text"
-        aria-label="saisie du contenu textuel"
-        value={inputs.text}
-        onChange={handleText}
-        placeholder="Ecrivez quelque chose"
-      />
-
       <ImgPreview />
 
       {error && (
