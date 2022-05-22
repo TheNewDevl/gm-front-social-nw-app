@@ -29,15 +29,18 @@ function CreateComment({ post, dataComment, setDataComment }) {
     setLoading(true)
     try {
       e.preventDefault()
-      const res = await fetch(process.env.REACT_APP_BASE_URL_API + 'comment', {
-        method: 'POST',
+      const res = await fetch(
+        process.env.REACT_APP_LOCALIP_URL_API + 'comment',
+        {
+          method: 'POST',
 
-        body: JSON.stringify({ postId: post.id, text: input }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.user.token}`,
-        },
-      })
+          body: JSON.stringify({ postId: post.id, text: input }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.user.token}`,
+          },
+        }
+      )
       const parsedRes = await res.json()
 
       if (res.ok) {

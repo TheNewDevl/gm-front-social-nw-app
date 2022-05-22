@@ -20,14 +20,17 @@ export function usePostRequest(
   async function makeRequest() {
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:3000/api/${uri}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(credentials),
-      })
+      const response = await fetch(
+        `${process.env.REACT_APP_LOCALIP_URL_API}${uri}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(credentials),
+        }
+      )
       const dataApi = await response.json()
       if (response.status >= 400) {
         setError(dataApi.message)
@@ -85,11 +88,14 @@ export function useFetch(uri) {
 
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:3000/api/${uri}`, {
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        })
+        const response = await fetch(
+          `${process.env.REACT_APP_LOCALIP_URL_API}${uri}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.user.token}`,
+            },
+          }
+        )
         const data = await response.json()
         setData(data)
         setError(false)

@@ -1,22 +1,26 @@
 import * as React from 'react'
-import Box from '@mui/material/Box'
-import Avatar from '@mui/material/Avatar'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-import Settings from '@mui/icons-material/Settings'
-import Logout from '@mui/icons-material/Logout'
-import { AppBar, Tab } from '@mui/material'
+import { Settings, Logout } from '@mui/icons-material'
+import HomeIcon from '@mui/icons-material/Home'
+import {
+  AppBar,
+  Tab,
+  Menu,
+  MenuItem,
+  Avatar,
+  ListItemIcon,
+  Divider,
+  Tooltip,
+  IconButton,
+  Box,
+  useTheme,
+  Typography,
+} from '@mui/material'
 import LogoPng from '../../assets/icon-left-font-monochrome-white.svg'
+import BarContainer from '../../Layout/BarContainer'
 import { UserContext } from '../../utils/context/context'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import Loader from '../Loader/Loader'
 import { Link } from 'react-router-dom'
-import HomeIcon from '@mui/icons-material/Home'
-import './Header.scss'
 
 function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -28,6 +32,7 @@ function Header() {
     setAnchorEl(null)
   }
 
+  const theme = useTheme()
   //////
   const { user, hasProfile, setUser } = React.useContext(UserContext)
   const uri = user ? `profile/${user.user.id}` : 'profile'
@@ -38,9 +43,12 @@ function Header() {
   return (
     <React.Fragment>
       <AppBar sx={{ height: '50px' }} position="sticky">
-        <Box className="container">
-          <img className="logo" src={LogoPng} alt="Logo Groupomania" />
-
+        <BarContainer>
+          <img
+            style={{ height: '30px', maxWidth: '50%' }}
+            src={LogoPng}
+            alt="Logo Groupomania"
+          />
           {/* ///////////NAV////////// */}
           {(user && user.user.hasProfile === 1) ||
           (user && hasProfile === '1') ? (
@@ -67,11 +75,37 @@ function Header() {
                 <Tab
                   component={Link}
                   textColor="#fff"
-                  sx={{ p: 0, mr: '-30px' }}
+                  sx={{
+                    p: 0,
+                    mr: '-30px',
+                    [theme.breakpoints.up('sm')]: { mr: '0px' },
+                    ...theme.headerTabsHover,
+                  }}
                   to="/"
                   title="Accueil"
                   role="link"
-                  label={<HomeIcon className="HomeIcon" fontSize="large" />}
+                  label={
+                    <>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="bold"
+                        sx={{
+                          [theme.breakpoints.down('sm')]: {
+                            display: 'none',
+                          },
+                        }}
+                        role="link"
+                      >
+                        Publications
+                      </Typography>
+                      <HomeIcon
+                        sx={{
+                          [theme.breakpoints.up('sm')]: { display: 'none' },
+                        }}
+                        fontSize="large"
+                      />
+                    </>
+                  }
                 />
 
                 <Tooltip title="Account settings">
@@ -93,7 +127,6 @@ function Header() {
               </Box>
             )
           ) : null}
-
           {/* /////////MENU////////// */}
           <Menu
             anchorEl={anchorEl}
@@ -157,7 +190,7 @@ function Header() {
               Se deconnecter
             </MenuItem>
           </Menu>
-        </Box>
+        </BarContainer>
       </AppBar>
     </React.Fragment>
   )

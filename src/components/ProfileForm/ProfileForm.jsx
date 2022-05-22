@@ -4,11 +4,11 @@ import { useState } from 'react'
 import {
   Avatar,
   Typography,
-  Input,
   TextField,
   Button,
   Box,
   CircularProgress,
+  Stack,
 } from '@mui/material'
 
 import { useContext } from 'react'
@@ -18,8 +18,12 @@ import './ProfileForm.scss'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
+import { PhotoCamera } from '@mui/icons-material'
+import { useTheme } from '@mui/material'
+import { width } from '@mui/system'
 
 function ProfileForm({ method, uri = '' }) {
+  const theme = useTheme()
   const [profileInputs, setprofileInputs] = useState({
     firstName: '',
     lastName: '',
@@ -54,6 +58,13 @@ function ProfileForm({ method, uri = '' }) {
     })
   }
 
+  //delete uploaded file
+  const handleDete = () => {
+    setFile({
+      file: '',
+      urlForPreview: null,
+    })
+  }
   const handleFile = (e) => {
     setFile({
       file: e.target.files[0],
@@ -73,13 +84,16 @@ function ProfileForm({ method, uri = '' }) {
       data.append('lastName', profileInputs.lastName)
       data.append('bio', profileInputs.bio)
 
-      const response = await fetch(`http://localhost:3000/api/profile/${uri}`, {
-        method: method,
-        body: data,
-        headers: {
-          Authorization: `Bearer ${user.user.token}`,
-        },
-      })
+      const response = await fetch(
+        `${process.env.REACT_APP_LOCALIP_URL_API}profile/${uri}`,
+        {
+          method: method,
+          body: data,
+          headers: {
+            Authorization: `Bearer ${user.user.token}`,
+          },
+        }
+      )
       const parsedRespose = await response.json()
       console.log(parsedRespose)
       if (parsedRespose.message === 'Profil sauvegardé') {
@@ -102,7 +116,6 @@ function ProfileForm({ method, uri = '' }) {
       setLoading(false)
     }
   }
-
   //will display a profile picture if it exists
   const ProfilePic = () => {
     if (data || file.urlForPreview) {
@@ -163,6 +176,11 @@ function ProfileForm({ method, uri = '' }) {
           <br />
           {/* BIO */}
           <TextareaAutosize
+            style={{ backgroundColor: `${theme.palette.background.default}` }}
+            sx={{
+              resize: 'none',
+              backgroundColor: `${theme.palette.background.default}`,
+            }}
             className="bio__input"
             required
             minRows={4}
@@ -175,34 +193,74 @@ function ProfileForm({ method, uri = '' }) {
           <label className="bio__label" htmlFor="bio">
             A propos de moi *
           </label>
-
           <Typography component="span" variant="body2" color="error.light">
             {formErrors.bio}
           </Typography>
+          <br />
           {/* Avatar */}
-          <Input
-            accept="image/*"
-            onChange={handleFile}
-            sx={{ marginTop: '1em' }}
-            name="file"
-            fullWidth
-            type="file"
-          />
+
           {/* Api errors */}
           {error && (
             <Typography component="span" variant="body1" color="error.light">
               {error}
             </Typography>
           )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={loading ? true : false}
+          <Stack
+            mt="1em"
+            // direction={theme.breakpoints.up('sm') && 'row'}
+            justifyContent="center"
+            flexWrap="wrap"
+            gap={1}
+            sx={{
+              width: '100%',
+              [theme.breakpoints.up('sm')]: { flexDirection: 'row' },
+            }}
           >
-            {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
-          </Button>
+            <label htmlFor="file">
+              <Button
+                fullWidth
+                sx={{
+                  [theme.breakpoints.up('sm')]: { width: '180px' },
+                }}
+                variant="outlined"
+                component="label"
+              >
+                Image
+                <PhotoCamera className="upload__icon" />
+                <input
+                  sx={{ marginTop: '1em' }}
+                  className="upload__input"
+                  accept="image/*"
+                  type="file"
+                  name="file"
+                  onChange={handleFile}
+                  hidden
+                />
+              </Button>
+            </label>
+            {file.urlForPreview && (
+              <Button
+                sx={{
+                  [theme.breakpoints.up('sm')]: { width: '180px' },
+                }}
+                variant="outlined"
+                color="error"
+                onClick={handleDete}
+              >
+                Supprimer <PhotoCamera className="upload__icon" />
+              </Button>
+            )}
+            <Button
+              sx={{
+                [theme.breakpoints.up('sm')]: { width: '180px' },
+              }}
+              type="submit"
+              variant="contained"
+              disabled={loading ? true : false}
+            >
+              {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
+            </Button>
+          </Stack>
         </Box>
       )}
     </>

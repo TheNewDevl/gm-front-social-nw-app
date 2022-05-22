@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import { Box } from '@mui/system'
 import { DarkModeContext } from '../../utils/context/context'
 import { useTheme } from '@mui/material'
+import BarContainer from '../../Layout/BarContainer'
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 70,
@@ -59,6 +60,7 @@ function Footer() {
   const [isChecked, setIsChecked] = useState(false)
   const { setDarkMode } = useContext(DarkModeContext)
   const theme = useTheme()
+
   //footer actual time
   const [date, setDate] = useState('')
   setInterval(() => {
@@ -74,8 +76,7 @@ function Footer() {
   return (
     <Box
       style={{
-        background:
-          'linear-gradient(180deg,rgba(43, 115, 179, 1) 0%,rgba(77, 179, 233, 1) 35%)',
+        background: theme.footerGradient,
       }}
       component="footer"
       width="100vw"
@@ -84,22 +85,14 @@ function Footer() {
       left="0"
       position="fixed"
     >
-      <Box
-        margin="auto"
-        width="100%"
-        maxWidth="1200px"
-        pl="1em"
-        pr="1em"
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <BarContainer>
         <Typography fontWeight="bold" color="#fff" component="p">
           {date}
         </Typography>
 
         <FormGroup>
           <FormControlLabel
+            label="Theme"
             aria-label="Switch light or dark mode theme"
             sx={{ m: '5px 0', color: '#fff' }}
             control={
@@ -109,10 +102,9 @@ function Footer() {
                 checked={isChecked}
               />
             }
-            label="Theme"
           />
         </FormGroup>
-      </Box>
+      </BarContainer>
     </Box>
   )
 }

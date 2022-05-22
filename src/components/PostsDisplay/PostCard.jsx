@@ -58,6 +58,7 @@ export default function PostCard({ post }) {
   const { user } = useContext(UserContext)
   const [error, setError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
   const queryComRefs = useRef({
     limit: 5,
     offset: 0,
@@ -68,7 +69,7 @@ export default function PostCard({ post }) {
     try {
       setIsLoading(true)
       const uri = `comment/post/${post.id}/?limit=${queryComRefs.current.limit}&offset=${queryComRefs.current.offset}`
-      const res = await fetch(process.env.REACT_APP_BASE_URL_API + uri, {
+      const res = await fetch(process.env.REACT_APP_LOCALIP_URL_API + uri, {
         headers: {
           Authorization: `Bearer ${user.user.token}`,
         },

@@ -59,13 +59,16 @@ function CreatePost() {
       data.append('file', inputs.file)
       data.append('text', inputs.text)
 
-      const response = await fetch('http://localhost:3000/api/posts/upload', {
-        method: 'POST',
-        body: data,
-        headers: {
-          Authorization: `Bearer ${user.user.token}`,
-        },
-      })
+      const response = await fetch(
+        `${process.env.REACT_APP_LOCALIP_URL_API}posts/upload`,
+        {
+          method: 'POST',
+          body: data,
+          headers: {
+            Authorization: `Bearer ${user.user.token}`,
+          },
+        }
+      )
       const parsedRespose = await response.json()
       if (response.ok) {
         updateData(parsedRespose.post)

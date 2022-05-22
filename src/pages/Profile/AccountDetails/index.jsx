@@ -47,7 +47,7 @@ function AccountDetails() {
     try {
       e.preventDefault()
       const response = await fetch(
-        `http://localhost:3000/api/user/${user.user.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}user/${user.user.id}`,
         {
           method: 'DELETE',
           headers: {

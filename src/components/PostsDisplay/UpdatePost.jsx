@@ -49,7 +49,7 @@ function UpdatePost({ post }) {
       data.append('file', updateInputs.file)
       data.append('text', updateInputs.text)
       const response = await fetch(
-        `http://localhost:3000/api/posts/${post.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}posts/${post.id}`,
         {
           method: 'PATCH',
           body: data,

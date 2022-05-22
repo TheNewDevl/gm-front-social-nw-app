@@ -40,7 +40,7 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
     setIsLoading(true)
     try {
       const response = await fetch(
-        `http://localhost:3000/api/comment/${comment.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}comment/${comment.id}`,
         {
           method: 'PATCH',
           body: JSON.stringify({ text: input }),
@@ -91,7 +91,7 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/comment/${comment.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}comment/${comment.id}`,
         {
           method: 'DELETE',
           headers: {

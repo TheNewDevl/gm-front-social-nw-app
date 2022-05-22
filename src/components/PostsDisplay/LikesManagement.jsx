@@ -55,7 +55,7 @@ function LikesManagement({ post }) {
       : { like: 'like' }
     try {
       const res = await fetch(
-        `http://localhost:3000/api/posts/likes/${post.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}posts/likes/${post.id}`,
         {
           method: 'PATCH',
           body: JSON.stringify(body),

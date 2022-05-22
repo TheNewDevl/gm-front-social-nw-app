@@ -34,7 +34,7 @@ function DeletePost({ post }) {
     try {
       e.preventDefault()
       const response = await fetch(
-        `http://localhost:3000/api/posts/${post.id}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}posts/${post.id}`,
         {
           method: 'DELETE',
           headers: {

@@ -38,7 +38,7 @@ function PostsDisplay() {
 
       setIsLoading(true)
       const res = await fetch(
-        `http://localhost:3000/api/posts/?limit=${queryRefs.current.limit}&offset=${queryRefs.current.offset}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}posts/?limit=${queryRefs.current.limit}&offset=${queryRefs.current.offset}`,
         {
           headers: {
             Authorization: `Bearer ${user.user.token}`,

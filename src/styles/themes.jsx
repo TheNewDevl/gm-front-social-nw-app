@@ -1,5 +1,4 @@
 import { createTheme } from '@mui/material'
-import { blue } from '@mui/material/colors'
 import { useContext } from 'react'
 import { DarkModeContext } from '../utils/context/context'
 
@@ -41,19 +40,6 @@ export const Themes = {
                 default: '#192231',
                 paper: '#24344d',
               },
-              overrides: {
-                MuiAppBar: {
-                  colorInherit: {
-                    backgroundColor: '#689f38',
-                    color: '#fff',
-                  },
-                },
-              },
-              props: {
-                MuiAppBar: {
-                  color: 'inherit',
-                },
-              },
             }),
       },
       shape: {
@@ -61,6 +47,31 @@ export const Themes = {
       },
       footerShadow:
         '0px -2px 4px -1px rgb(0 0 0 / 20%),0px -4px 5px 0px rgb(0 0 0 / 14%), 0px -1px 10px 0px rgb(0 0 0 / 12%)',
+      footerGradient:
+        mode === 'light' &&
+        'linear-gradient(344deg, rgba(97,140,208,1) 23%, rgba(179,229,252,1) 100%)',
+      components: {
+        MuiAppBar: {
+          styleOverrides: {
+            root: {
+              background:
+                mode === 'light' &&
+                'linear-gradient(220deg, rgba(97,140,208,1) 23%, rgba(179,229,252,1) 100%)',
+              color: '#fff',
+            },
+          },
+        },
+      },
+      sizes: {
+        maxWidthPage: '1200px',
+      },
+      headerTabsHover: {
+        '&:hover': {
+          transition: 'all 0.3s ease-in-out',
+          transform: 'scale(1.1)',
+          textDecoration: 'underline',
+        },
+      },
     })
     return lightTheme
   },

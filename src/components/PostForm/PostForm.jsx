@@ -4,6 +4,7 @@ import {
   TextareaAutosize,
   Stack,
   CircularProgress,
+  Box,
 } from '@mui/material'
 import React from 'react'
 import { PhotoCamera } from '@mui/icons-material'
@@ -60,7 +61,6 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
           {error}
         </Typography>
       )}
-
       <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
         <label htmlFor="file">
           <Button variant="outlined" component="label">
