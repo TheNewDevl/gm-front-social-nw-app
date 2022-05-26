@@ -42,6 +42,7 @@ function DeletePost({ post }) {
           },
         }
       )
+
       let parsedRes = await response.json()
       if (response.ok) {
         setAlertStates({
@@ -55,13 +56,17 @@ function DeletePost({ post }) {
         setAlertStates({
           open: true,
           type: 'error',
-          message: { error },
+          message: parsedRes.message,
         })
       }
     } catch (error) {
       setError(error.message)
-
       console.log(error)
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: error.message,
+      })
     }
   }
 

@@ -22,7 +22,7 @@ import { PhotoCamera } from '@mui/icons-material'
 import { useTheme } from '@mui/material'
 import { width } from '@mui/system'
 
-function ProfileForm({ method, uri = '' }) {
+function ProfileForm({ method }) {
   const theme = useTheme()
   const [profileInputs, setprofileInputs] = useState({
     firstName: '',
@@ -38,16 +38,19 @@ function ProfileForm({ method, uri = '' }) {
   const [formErrors] = useState({})
   const { user, setHasProfile } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
+  const [profileId, setProfileId] = useState('')
 
   //if the profile has already been created, the fields are pre-filled with the profile data
   const { data, isLoading } = useFetch(`profile/${user.user.id}`)
   React.useEffect(() => {
-    if (data)
+    if (data) {
       setprofileInputs({
         firstName: data.firstName,
         lastName: data.lastName,
         bio: data.bio,
       })
+      setProfileId(data.id)
+    }
   }, [data])
 
   //set input values to credentials state
@@ -85,7 +88,7 @@ function ProfileForm({ method, uri = '' }) {
       data.append('bio', profileInputs.bio)
 
       const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}profile/${uri}`,
+        `${process.env.REACT_APP_LOCALIP_URL_API}profile/${profileId}`,
         {
           method: method,
           body: data,
@@ -108,6 +111,8 @@ function ProfileForm({ method, uri = '' }) {
           type: 'success',
           message: 'Modifications enregistrées !',
         })
+      } else {
+        setError(parsedRespose.message)
       }
     } catch (error) {
       console.log(error)
