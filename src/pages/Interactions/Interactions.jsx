@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { UserContext } from '../../utils/context/context'
+import { UserContext } from '../../utils/context/UserContext'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 function Interactions() {

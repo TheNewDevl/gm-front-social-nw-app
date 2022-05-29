@@ -5,11 +5,9 @@ import {
   AccordionDetails,
 } from '@mui/material'
 import React, { useContext, useState, useEffect } from 'react'
-import {
-  AlertContext,
-  PostsContext,
-  UserContext,
-} from '../../utils/context/UserContext'
+import { AlertContext } from '../../utils/context/AlertContext'
+import { PostsContext } from '../../utils/context/PostsContext'
+import { UserContext } from '../../utils/context/UserContext'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import PostForm from '../PostForm/PostForm'

@@ -10,7 +10,7 @@ import ProtectedRoute from './auth/ProtectedRoute'
 
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import { UserContext } from './utils/context/context'
+import { UserContext } from './utils/context/UserContext'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import FeedBackAlert from './components/Alert/TestAlert'

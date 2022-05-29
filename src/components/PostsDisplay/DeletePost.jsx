@@ -8,11 +8,9 @@ import {
   IconButton,
 } from '@mui/material'
 import { useContext, useState } from 'react'
-import {
-  PostsContext,
-  UserContext,
-  AlertContext,
-} from '../../utils/context/UserContext'
+import { PostsContext } from '../../utils/context/PostsContext'
+import { UserContext } from '../../utils/context/UserContext'
+import { AlertContext } from '../../utils/context/AlertContext'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 function DeletePost({ post }) {

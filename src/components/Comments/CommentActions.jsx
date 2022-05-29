@@ -6,11 +6,9 @@ import {
   TextareaAutosize,
 } from '@mui/material'
 import { useContext, useState } from 'react'
-import {
-  AlertContext,
-  PostsContext,
-  UserContext,
-} from '../../utils/context/UserContext'
+import { AlertContext } from '../../utils/context/AlertContext'
+import { PostsContext } from '../../utils/context/PostsContext'
+import { UserContext } from '../../utils/context/UserContext'
 import { DialogTitle, DialogActions, DialogContent } from '@mui/material'
 import { useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send'

@@ -1,6 +1,7 @@
 import Loader from '../Loader/Loader'
 import { useContext, useEffect, useState, useRef } from 'react'
-import { PostsContext, UserContext } from '../../utils/context/UserContext'
+import { UserContext } from '../../utils/context/UserContext'
+import { PostsContext } from '../../utils/context/PostsContext'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
 import PostCard from './PostCard'

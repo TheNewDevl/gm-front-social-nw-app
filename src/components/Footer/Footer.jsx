@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import { Box } from '@mui/system'
-import { DarkModeContext } from '../../utils/context/context'
+import { DarkModeContext } from '../../utils/context/DarkModeContex'
 import { useTheme } from '@mui/material'
 import BarContainer from '../../Layout/BarContainer'
 

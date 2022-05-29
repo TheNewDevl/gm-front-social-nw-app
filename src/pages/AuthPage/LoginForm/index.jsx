@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect, Fragment, useRef } from 'react'
 
 import { inputs } from './inputs'
 
@@ -10,15 +9,16 @@ import Box from '@mui/material/Box'
 
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
+import { loginValidation } from '../../../utils/validators'
 
 function Login() {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   })
-  const [formErrors] = useState({})
+  const [formErrors, setFormErrors] = useState({})
   const [readyToSubmit, setReadyToSubmit] = useState(false)
-
+  const [btnState, setBtnState] = useState(true)
   const { error, isLoading } = usePostRequest(
     'auth/login',
     credentials,
@@ -34,10 +34,30 @@ function Login() {
     })
   }
 
+  //dynamic errors display
+  useEffect(() => {
+    const errors = loginValidation(credentials)
+    if (credentials.username) {
+      setFormErrors(({ password }) => {
+        return { password, username: errors.username }
+      })
+    }
+    if (credentials.password) {
+      setFormErrors(({ username }) => {
+        return { username, password: errors.password }
+      })
+    }
+    Object.keys(errors).length === 0 ? setBtnState(false) : setBtnState(true)
+  }, [credentials])
+
   /** Check the the input values validity, set formerror and submit state */
   const handleSubmit = (e) => {
     e.preventDefault()
+    const errors = loginValidation(credentials)
+    setFormErrors(errors)
+
     setReadyToSubmit(true)
+
     //Setting this value to false again will let we use the useRequest
     setTimeout(() => {
       setReadyToSubmit(false)
@@ -48,21 +68,32 @@ function Login() {
     <>
       <Box component="form" onSubmit={handleSubmit}>
         {inputs.map((input, index) => (
-          <TextField
-            key={index}
-            variant="standard"
-            margin="normal"
-            required
-            fullWidth
-            autoFocus={input.autofocus ? true : false}
-            id={input.name}
-            label={input.label}
-            name={input.name}
-            type={input.type}
-            value={credentials[input.name]}
-            autoComplete="off"
-            onChange={handleValues}
-          />
+          <Fragment key={index}>
+            <TextField
+              key={index}
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              autoFocus={input.autofocus ? true : false}
+              id={input.name}
+              label={input.label}
+              name={input.name}
+              type={input.type}
+              value={credentials[input.name]}
+              autoComplete="off"
+              error={formErrors[input.name] ? true : false}
+              onChange={handleValues}
+            />
+            <Typography
+              key={`${index}-${input.name}`}
+              component="span"
+              variant="body2"
+              color="error.light"
+            >
+              {formErrors[input.name]}
+            </Typography>
+          </Fragment>
         ))}
         {error && (
           <Typography component="span" variant="body1" color="error.light">
@@ -74,7 +105,7 @@ function Login() {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
-          disabled={isLoading ? true : false}
+          disabled={isLoading || btnState ? true : false}
         >
           {isLoading ? <CircularProgress size={'1.7em'} /> : 'Se connecter'}
         </Button>

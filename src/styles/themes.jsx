@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material'
 import { useContext } from 'react'
-import { DarkModeContext } from '../utils/context/context'
+import { DarkModeContext } from '../utils/context/DarkModeContex'
 
 export const Themes = {
   Context() {

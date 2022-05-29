@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { useContext, useState, useEffect } from 'react'
-import { UserContext } from '../../../utils/context/context'
+import { UserContext } from '../../../utils/context/UserContext'
 import { useFetch } from '../../../utils/hooks/custom.hooks'
 import Loader from '../../../components/Loader/Loader'
 import * as React from 'react'

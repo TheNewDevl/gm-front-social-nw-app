@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -7,7 +6,7 @@ import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
 import { inputs } from './inputs'
-import validateCredentials from '../../../utils/validators'
+import { signUpValidation } from '../../../utils/validators'
 import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
 
@@ -20,6 +19,43 @@ const SignUp = () => {
     passwordConfirm: '',
   })
   const [readyToSubmit, setReadyToSubmit] = useState(false)
+  const [btnState, setBtnState] = useState(true)
+
+  //dynamic errors display
+  useEffect(() => {
+    const errors = signUpValidation(credentials)
+    if (credentials.username) {
+      setFormErrors(({ email, password, passwordConfirm }) => {
+        return { email, password, passwordConfirm, username: errors.username }
+      })
+    }
+    if (credentials.email) {
+      setFormErrors(({ username, password, passwordConfirm }) => {
+        return {
+          username,
+          password,
+          passwordConfirm,
+          email: errors.email,
+        }
+      })
+    }
+    if (credentials.password) {
+      setFormErrors(({ username, email, passwordConfirm }) => {
+        return { username, email, passwordConfirm, password: errors.password }
+      })
+    }
+    if (credentials.passwordConfirm) {
+      setFormErrors(({ username, email, password }) => {
+        return {
+          username,
+          email,
+          password,
+          passwordConfirm: errors.passwordConfirm,
+        }
+      })
+    }
+    Object.keys(errors).length === 0 ? setBtnState(false) : setBtnState(true)
+  }, [credentials])
 
   const { error, isLoading } = usePostRequest(
     'auth/signup',
@@ -38,8 +74,9 @@ const SignUp = () => {
 
   /** Check the the input values validity, set formerror and submit state */
   const handleSubmit = (e) => {
+    console.log(credentials)
     e.preventDefault()
-    const errors = validateCredentials(credentials)
+    const errors = signUpValidation(credentials)
     setFormErrors(errors)
     setReadyToSubmit(true)
 
@@ -52,7 +89,7 @@ const SignUp = () => {
     <>
       <Box noValidate component="form" onSubmit={handleSubmit}>
         {inputs.map((input, index) => (
-          <React.Fragment key={index}>
+          <Fragment key={index}>
             <TextField
               variant="standard"
               margin="normal"
@@ -76,7 +113,7 @@ const SignUp = () => {
             >
               {formErrors[input.name]}
             </Typography>
-          </React.Fragment>
+          </Fragment>
         ))}
         {error && (
           <Typography component="span" variant="body1" color="error.light">
@@ -88,7 +125,7 @@ const SignUp = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
-          disabled={isLoading ? true : false}
+          disabled={isLoading || btnState ? true : false}
         >
           {isLoading ? <CircularProgress size={'1.7em'} /> : "S'inscrire"}
         </Button>

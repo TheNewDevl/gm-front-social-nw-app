@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import LogoPng from '../../assets/icon-left-font-monochrome-white.svg'
 import BarContainer from '../../Layout/BarContainer'
-import { UserContext } from '../../utils/context/context'
+import { UserContext } from '../../utils/context/UserContext'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import Loader from '../Loader/Loader'
 import { Link } from 'react-router-dom'

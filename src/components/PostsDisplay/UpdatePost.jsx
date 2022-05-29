@@ -8,11 +8,9 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import { useContext, useState, useEffect } from 'react'
-import {
-  AlertContext,
-  PostsContext,
-  UserContext,
-} from '../../utils/context/UserContext'
+import { AlertContext } from '../../utils/context/AlertContext'
+import { PostsContext } from '../../utils/context/PostsContext'
+import { UserContext } from '../../utils/context/UserContext'
 import PostForm from '../PostForm/PostForm'
 
 function UpdatePost({ post }) {

@@ -1,6 +1,6 @@
 import AccountDetails from './AccountDetails'
 import ProfileForm from '../../components/ProfileForm/ProfileForm'
-import { UserContext } from '../../utils/context/context'
+import { UserContext } from '../../utils/context/UserContext'
 import { useContext, useState } from 'react'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 

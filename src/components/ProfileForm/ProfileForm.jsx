@@ -12,7 +12,9 @@ import {
 } from '@mui/material'
 
 import { useContext } from 'react'
-import { AlertContext, UserContext } from '../../utils/context/context'
+
+import { AlertContext } from '../../utils/context/AlertContext'
+import { UserContext } from '../../utils/context/UserContext'
 import './ProfileForm.scss'
 
 import { useFetch } from '../../utils/hooks/custom.hooks'

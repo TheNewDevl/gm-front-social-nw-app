@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { useContext } from 'react'
-import { UserContext } from '../../utils/context/context'
+import { UserContext } from '../../utils/context/UserContext'
 import ProfileForm from '../../components/ProfileForm/ProfileForm'
 
 import homeIllustration from '../../assets/home-illustration.jpg'

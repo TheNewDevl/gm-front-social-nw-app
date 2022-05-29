@@ -1,12 +1,9 @@
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { IconButton } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import {
-  AlertContext,
-  PostsContext,
-  UserContext,
-} from '../../utils/context/UserContext'
-
+import { AlertContext } from '../../utils/context/AlertContext'
+import { PostsContext } from '../../utils/context/PostsContext'
+import { UserContext } from '../../utils/context/UserContext'
 function LikesManagement({ post }) {
   const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)

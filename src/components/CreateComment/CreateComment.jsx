@@ -6,7 +6,8 @@ import {
 } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import { useContext, useState } from 'react'
-import { AlertContext, UserContext } from '../../utils/context/UserContext'
+import { UserContext } from '../../utils/context/UserContext'
+import { AlertContext } from '../../utils/context/AlertContext'
 
 function CreateComment({ post, dataComment, setDataComment }) {
   const { user } = useContext(UserContext)

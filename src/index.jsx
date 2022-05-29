@@ -1,12 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import {
-  UserProvider,
-  PostsProvider,
-  AlertProvider,
-} from './utils/context/context'
-import { DarkModeProvider } from './utils/context/context'
+import { UserProvider } from './utils/context/UserContext'
+import { PostsProvider } from './utils/context/PostsContext'
+import { AlertProvider } from './utils/context/AlertContext'
+import { DarkModeProvider } from './utils/context/DarkModeContex'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 

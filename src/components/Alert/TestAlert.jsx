@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Slide, Snackbar } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
-import { AlertContext } from '../../utils/context/context'
+import { AlertContext } from '../../utils/context/AlertContext'
 
 //slide transition component
 function TransitionLeft(props) {
