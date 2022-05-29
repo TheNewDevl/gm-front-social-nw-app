@@ -10,7 +10,7 @@ import {
   AlertContext,
   PostsContext,
   UserContext,
-} from '../../utils/context/context'
+} from '../../utils/context/UserContext'
 import { DialogTitle, DialogActions, DialogContent } from '@mui/material'
 import { useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send'

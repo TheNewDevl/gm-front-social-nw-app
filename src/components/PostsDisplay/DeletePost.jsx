@@ -12,7 +12,7 @@ import {
   PostsContext,
   UserContext,
   AlertContext,
-} from '../../utils/context/context'
+} from '../../utils/context/UserContext'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 function DeletePost({ post }) {

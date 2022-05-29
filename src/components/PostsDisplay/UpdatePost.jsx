@@ -12,7 +12,7 @@ import {
   AlertContext,
   PostsContext,
   UserContext,
-} from '../../utils/context/context'
+} from '../../utils/context/UserContext'
 import PostForm from '../PostForm/PostForm'
 
 function UpdatePost({ post }) {

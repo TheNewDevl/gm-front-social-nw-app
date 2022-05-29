@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react'
 import { useContext } from 'react'
-import { UserContext } from '../context/context'
+import { UserContext } from '../context/UserContext'
 
 /** Used for post sign up and login post requests */
 export function usePostRequest(

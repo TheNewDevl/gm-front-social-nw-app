@@ -9,7 +9,7 @@ import {
   AlertContext,
   PostsContext,
   UserContext,
-} from '../../utils/context/context'
+} from '../../utils/context/UserContext'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import PostForm from '../PostForm/PostForm'

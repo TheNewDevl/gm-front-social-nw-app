@@ -5,7 +5,7 @@ import {
   AlertContext,
   PostsContext,
   UserContext,
-} from '../../utils/context/context'
+} from '../../utils/context/UserContext'
 
 function LikesManagement({ post }) {
   const { data, setData } = useContext(PostsContext)

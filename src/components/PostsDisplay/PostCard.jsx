@@ -18,7 +18,7 @@ import CreateComment from '../CreateComment/CreateComment'
 import CommentsCounter from '../Comments/CommentsCounter'
 import { Divider } from '@mui/material'
 import Comments from '../Comments/Comments'
-import { UserContext } from '../../utils/context/context'
+import { UserContext } from '../../utils/context/UserContext'
 import ProfilesDiag from '../ProfileDiag/ProfileDiag'
 
 const ExpandMore = styled((props) => {
