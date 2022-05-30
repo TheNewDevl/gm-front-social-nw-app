@@ -7,9 +7,10 @@ import Box from '@mui/material/Box'
 
 import { inputs } from './inputs'
 import { signUpValidation } from '../../../utils/validators'
-import { usePostRequest } from '../../../utils/hooks/custom.hooks'
+//import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
 
+import { usePostRequest } from '../../../api/axios'
 const SignUp = () => {
   const [formErrors, setFormErrors] = useState({})
   const [credentials, setCredentials] = useState({
@@ -73,11 +74,12 @@ const SignUp = () => {
   }
 
   /** Check the the input values validity, set formerror and submit state */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     console.log(credentials)
     e.preventDefault()
     const errors = signUpValidation(credentials)
     setFormErrors(errors)
+
     setReadyToSubmit(true)
 
     setTimeout(() => {

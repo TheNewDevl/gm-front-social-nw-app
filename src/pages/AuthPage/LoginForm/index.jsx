@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 
 import { inputs } from './inputs'
 
@@ -7,9 +7,12 @@ import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { usePostRequest } from '../../../utils/hooks/custom.hooks'
+//import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
 import { loginValidation } from '../../../utils/validators'
+import { instance } from '../../../api/axios'
+
+import { usePostRequest } from '../../../api/axios'
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -51,7 +54,7 @@ function Login() {
   }, [credentials])
 
   /** Check the the input values validity, set formerror and submit state */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const errors = loginValidation(credentials)
     setFormErrors(errors)

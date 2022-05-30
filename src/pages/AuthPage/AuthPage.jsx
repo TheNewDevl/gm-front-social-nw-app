@@ -23,8 +23,18 @@ import darkHomeIllustration from '../../assets/darkmode-home-illustration.jpg'
 function Home() {
   const { user, hasProfile } = useContext(UserContext)
   const theme = useTheme()
+
   //used to display sign up or login form
-  const [hasAccount, setHasAccount] = useState(false)
+  const [hasAccount, setHasAccount] = useState(true)
+  const [toggleValue, settoggleValue] = useState('login')
+
+  const handleClick = (e) => {
+    const value = e.currentTarget.value
+    settoggleValue(() => value)
+    value === 'signup'
+      ? setHasAccount((s) => false)
+      : setHasAccount((s) => true)
+  }
 
   // if an user is set, redirect to the posts page
   if (user && (user.user.hasProfile === 1 || hasProfile === '1'))
@@ -87,14 +97,15 @@ function Home() {
               <ToggleButtonGroup
                 color="primary"
                 fullWidth
-                value={hasAccount}
+                value={toggleValue}
                 exclusive
-                onChange={() => setHasAccount(!hasAccount)}
               >
-                <ToggleButton size="large" value={false}>
+                <ToggleButton onClick={handleClick} size="large" value="signup">
                   S'inscrire
                 </ToggleButton>
-                <ToggleButton value={true}>Se connecter</ToggleButton>
+                <ToggleButton onClick={handleClick} value="login">
+                  Se connecter
+                </ToggleButton>
               </ToggleButtonGroup>
             )}
             {!user && hasAccount && <Login />}

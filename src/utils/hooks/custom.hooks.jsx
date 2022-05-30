@@ -32,10 +32,11 @@ export function usePostRequest(
         }
       )
       const dataApi = await response.json()
-      if (response.status >= 400) {
+
+      /*     if (response.status >= 400) {
         setError(dataApi.message)
       }
-      console.log(dataApi.message)
+      console.log(dataApi.message) */
 
       if (
         response.status === 201 &&
@@ -43,6 +44,7 @@ export function usePostRequest(
       ) {
         setUser(dataApi)
       }
+
       if (dataApi.message === 'Profil sauvegardé') {
         setHasProfile('1')
         sessionStorage.setItem('hasProfile', '1')
