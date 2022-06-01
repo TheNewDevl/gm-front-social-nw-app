@@ -8,6 +8,7 @@ import { signUpValidation } from '../../../utils/validators'
 import { CircularProgress } from '@mui/material'
 import axios from '../../../api/axios'
 import { AuthInterceptors } from '../../../interceptors/AuthInterceptors'
+import RememberCheckBox from '../../../components/RememberCheckbox/RememberCheckox'
 
 const SignUp = () => {
   const [formErrors, setFormErrors] = useState({})
@@ -125,7 +126,9 @@ const SignUp = () => {
           <Typography component="span" variant="body1" color="error.light">
             {error}
           </Typography>
-        )}
+        )}{' '}
+        <br />
+        <RememberCheckBox />
         <Button
           type="submit"
           fullWidth

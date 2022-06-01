@@ -41,9 +41,14 @@ function PostsDisplay() {
       setData((data) => [...data, ...res.data[0]])
       queryRefs.current.count = res.data[1]
     } catch (error) {
-      if (error.response) setError(error.message.data)
-      if (error.request) setError('Pas de réponse du serveur')
-      setError(error.message)
+      if (error.response) {
+        setError(error.response.data.message)
+      } else if (error.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(error.message)
+        console.log(error)
+      }
     } finally {
       setIsLoading(false)
       queryRefs.current.offset += queryRefs.current.limit

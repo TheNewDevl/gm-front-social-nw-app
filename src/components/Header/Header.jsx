@@ -21,8 +21,10 @@ import { UserContext } from '../../utils/context/UserContext'
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import Loader from '../Loader/Loader'
 import { Link } from 'react-router-dom'
+import useLogout from '../../utils/hooks/useLogout'
 
 function Header() {
+  const logout = useLogout()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -35,10 +37,14 @@ function Header() {
   const theme = useTheme()
   //////
   const { user, hasProfile, setUser } = React.useContext(UserContext)
+
   const uri = user ? `profile/${user.user.id}` : 'profile'
+
   const { data, isLoading, error } = useFetch(uri)
 
-  /** uniquement pour le nav */
+  const handleLogout = async () => {
+    await logout()
+  }
 
   return (
     <React.Fragment>
@@ -176,14 +182,7 @@ function Header() {
 
             <Divider />
 
-            <MenuItem
-              component={Link}
-              to="/auth"
-              onClick={() => {
-                setUser('')
-                sessionStorage.clear()
-              }}
-            >
+            <MenuItem component={Link} to="/auth" onClick={handleLogout}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

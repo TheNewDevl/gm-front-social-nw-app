@@ -8,6 +8,7 @@ import { CircularProgress } from '@mui/material'
 import { loginValidation } from '../../../utils/validators'
 import { AuthInterceptors } from '../../../interceptors/AuthInterceptors'
 import axios from '../../../api/axios'
+import RememberCheckBox from '../../../components/RememberCheckbox/RememberCheckox'
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -99,6 +100,8 @@ function Login() {
             {error}
           </Typography>
         )}
+        <br />
+        <RememberCheckBox />
         <Button
           type="submit"
           fullWidth
