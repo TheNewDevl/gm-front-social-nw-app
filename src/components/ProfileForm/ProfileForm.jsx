@@ -1,6 +1,4 @@
-import * as React from 'react'
-import { useState } from 'react'
-
+import { useState, useEffect } from 'react'
 import {
   Avatar,
   Typography,
@@ -10,19 +8,17 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material'
-
 import { useContext } from 'react'
-
 import { AlertContext } from '../../utils/context/AlertContext'
 import { UserContext } from '../../utils/context/UserContext'
 import './ProfileForm.scss'
-
 import { useFetch } from '../../utils/hooks/custom.hooks'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
 import { PhotoCamera } from '@mui/icons-material'
 import { useTheme } from '@mui/material'
-import { width } from '@mui/system'
+import { AuthInterceptors } from '../../interceptors/AuthInterceptors'
+import axios from '../../api/axios'
 
 function ProfileForm({ method }) {
   const theme = useTheme()
@@ -38,13 +34,14 @@ function ProfileForm({ method }) {
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
   const [formErrors] = useState({})
-  const { user, setHasProfile } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
   const [profileId, setProfileId] = useState('')
+  const uri = `profile/${profileId}`
 
   //if the profile has already been created, the fields are pre-filled with the profile data
   const { data, isLoading } = useFetch(`profile/${user.user.id}`)
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       setprofileInputs({
         firstName: data.firstName,
@@ -80,70 +77,64 @@ function ProfileForm({ method }) {
 
   const handleSubmit = async (e) => {
     setLoading(true)
+    e.preventDefault()
+    const data = new FormData()
+    //append file only if file exists (back requirement)
+    file.file && data.append('file', file.file)
+    data.append('firstName', profileInputs.firstName)
+    data.append('lastName', profileInputs.lastName)
+    data.append('bio', profileInputs.bio)
     try {
-      e.preventDefault()
-      const data = new FormData()
-      //append file only if file exists (back requirement)
-      file.file && data.append('file', file.file)
-      data.append('firstName', profileInputs.firstName)
-      data.append('lastName', profileInputs.lastName)
-      data.append('bio', profileInputs.bio)
-
-      const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}profile/${profileId}`,
-        {
-          method: method,
-          body: data,
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      const parsedRespose = await response.json()
-      console.log(parsedRespose)
-      if (parsedRespose.message === 'Profil sauvegardé') {
-        setHasProfile('1')
-        sessionStorage.setItem('hasProfile', '1')
-      }
-
-      //set success alert if res ok
-      if (response.ok) {
-        setAlertStates({
-          open: true,
-          type: 'success',
-          message: 'Modifications enregistrées !',
+      if (method === 'POST') {
+        await axios.post(uri, data, {
+          headers: { Authorization: `Bearer ${user.user.token}` },
         })
-      } else {
-        setError(parsedRespose.message)
       }
-    } catch (error) {
-      console.log(error)
-      setError(error)
+
+      if (method === 'PATCH') {
+        await axios.patch(uri, data, {
+          headers: { Authorization: `Bearer ${user.user.token}` },
+        })
+      }
+      setAlertStates({
+        open: true,
+        type: 'success',
+        message: 'Modifications enregistrées !',
+      })
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
+      } else if (err.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+        console.log(err)
+      }
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: error,
+      })
     } finally {
       setLoading(false)
-    }
-  }
-  //will display a profile picture if it exists
-  const ProfilePic = () => {
-    if (data || file.urlForPreview) {
-      return (
-        <Avatar
-          className="profilePic"
-          sx={{ width: 150, height: 150 }}
-          src={file.urlForPreview ? file.urlForPreview : data.photo}
-          alt="Photo de profil"
-        />
-      )
     }
   }
 
   return (
     <>
+      <AuthInterceptors />
       {isLoading ? (
         <Loader />
       ) : (
         <Box component="form" onSubmit={handleSubmit}>
-          <ProfilePic />
+          {data || file.urlForPreview ? (
+            <Avatar
+              className="profilePic"
+              sx={{ width: 150, height: 150 }}
+              src={file.urlForPreview ? file.urlForPreview : data.photo}
+              alt="Photo de profil"
+            />
+          ) : null}
           {/* firstName */}
           <div className="names__container">
             <TextField

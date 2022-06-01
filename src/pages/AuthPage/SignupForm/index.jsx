@@ -1,16 +1,14 @@
 import { useState, useEffect, Fragment } from 'react'
-
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-
 import { inputs } from './inputs'
 import { signUpValidation } from '../../../utils/validators'
-//import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
+import axios from '../../../api/axios'
+import { AuthInterceptors } from '../../../interceptors/AuthInterceptors'
 
-import { usePostRequest } from '../../../api/axios'
 const SignUp = () => {
   const [formErrors, setFormErrors] = useState({})
   const [credentials, setCredentials] = useState({
@@ -19,8 +17,10 @@ const SignUp = () => {
     password: '',
     passwordConfirm: '',
   })
-  const [readyToSubmit, setReadyToSubmit] = useState(false)
   const [btnState, setBtnState] = useState(true)
+  const [isLoading, setLoading] = useState(false)
+  const [error, setError] = useState()
+  const signupUri = 'auth/signup'
 
   //dynamic errors display
   useEffect(() => {
@@ -58,13 +58,6 @@ const SignUp = () => {
     Object.keys(errors).length === 0 ? setBtnState(false) : setBtnState(true)
   }, [credentials])
 
-  const { error, isLoading } = usePostRequest(
-    'auth/signup',
-    credentials,
-    readyToSubmit,
-    formErrors
-  )
-
   //set input values to credentials state
   const handleValues = (e) => {
     setCredentials({
@@ -80,15 +73,26 @@ const SignUp = () => {
     const errors = signUpValidation(credentials)
     setFormErrors(errors)
 
-    setReadyToSubmit(true)
-
-    setTimeout(() => {
-      setReadyToSubmit(false)
-    }, 1000)
+    if (Object.keys(errors).length === 0) {
+      try {
+        setLoading(true)
+        await axios.post(signupUri, {
+          username: credentials.username,
+          email: credentials.email,
+          password: credentials.password,
+        })
+      } catch (error) {
+        console.log(error)
+        setError(error.response.data.message)
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   return (
     <>
+      <AuthInterceptors />
       <Box noValidate component="form" onSubmit={handleSubmit}>
         {inputs.map((input, index) => (
           <Fragment key={index}>

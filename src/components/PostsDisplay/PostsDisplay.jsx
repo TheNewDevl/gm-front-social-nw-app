@@ -1,15 +1,13 @@
 import Loader from '../Loader/Loader'
 import { useContext, useEffect, useState, useRef } from 'react'
-import { UserContext } from '../../utils/context/UserContext'
 import { PostsContext } from '../../utils/context/PostsContext'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
 import PostCard from './PostCard'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function PostsDisplay() {
   const { data, setData } = useContext(PostsContext)
-  const { user } = useContext(UserContext)
-
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const queryRefs = useRef({
@@ -17,43 +15,34 @@ function PostsDisplay() {
     offset: 0,
     count: 0,
   })
+  const secureAxios = useSecureAxios()
+  const uri = `posts/?limit=${queryRefs.current.limit}&offset=${queryRefs.current.offset}`
 
   //get posts with pagination with uploading offset while scrolling the page
   const loadPosts = async () => {
+    //prevent bad request using the count query
+    if (
+      queryRefs.current.offset > 0 &&
+      queryRefs.current.offset >= queryRefs.current.count
+    ) {
+      return
+    }
+    if (
+      queryRefs.current.offset > 0 &&
+      queryRefs.current.count - queryRefs.current.offset <
+        queryRefs.current.limit
+    ) {
+      queryRefs.current.limit =
+        queryRefs.current.count - queryRefs.current.offset
+    }
     try {
-      //prevent bad request using the count query
-      if (
-        queryRefs.current.offset > 0 &&
-        queryRefs.current.offset >= queryRefs.current.count
-      ) {
-        return
-      }
-      if (
-        queryRefs.current.offset > 0 &&
-        queryRefs.current.count - queryRefs.current.offset <
-          queryRefs.current.limit
-      ) {
-        queryRefs.current.limit =
-          queryRefs.current.count - queryRefs.current.offset
-      }
-
       setIsLoading(true)
-      const res = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}posts/?limit=${queryRefs.current.limit}&offset=${queryRefs.current.offset}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      const parsedRes = await res.json()
-      if (res.ok) {
-        console.log(parsedRes)
-        setData((data) => [...data, ...parsedRes[0]])
-        queryRefs.current.count = parsedRes[1]
-      }
-      setError(parsedRes.message)
+      const res = await secureAxios.get(uri)
+      setData((data) => [...data, ...res.data[0]])
+      queryRefs.current.count = res.data[1]
     } catch (error) {
+      if (error.response) setError(error.message.data)
+      if (error.request) setError('Pas de réponse du serveur')
       setError(error.message)
     } finally {
       setIsLoading(false)

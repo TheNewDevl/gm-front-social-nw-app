@@ -1,18 +1,13 @@
 import { useState, useEffect, Fragment } from 'react'
-
 import { inputs } from './inputs'
-
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-
-//import { usePostRequest } from '../../../utils/hooks/custom.hooks'
 import { CircularProgress } from '@mui/material'
 import { loginValidation } from '../../../utils/validators'
-import { instance } from '../../../api/axios'
-
-import { usePostRequest } from '../../../api/axios'
+import { AuthInterceptors } from '../../../interceptors/AuthInterceptors'
+import axios from '../../../api/axios'
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -20,14 +15,11 @@ function Login() {
     password: '',
   })
   const [formErrors, setFormErrors] = useState({})
-  const [readyToSubmit, setReadyToSubmit] = useState(false)
   const [btnState, setBtnState] = useState(true)
-  const { error, isLoading } = usePostRequest(
-    'auth/login',
-    credentials,
-    readyToSubmit,
-    formErrors
-  )
+  const [isLoading, setLoading] = useState(false)
+  const [error, setError] = useState()
+
+  const loginUri = 'auth/login'
 
   //set input values to credentials state
   const handleValues = (e) => {
@@ -53,23 +45,27 @@ function Login() {
     Object.keys(errors).length === 0 ? setBtnState(false) : setBtnState(true)
   }, [credentials])
 
-  /** Check the the input values validity, set formerror and submit state */
-  const handleSubmit = async (e) => {
+  /** Check the the input values validity, set formerror and run request */
+  const HandleSubmit = async (e) => {
     e.preventDefault()
     const errors = loginValidation(credentials)
     setFormErrors(errors)
-
-    setReadyToSubmit(true)
-
-    //Setting this value to false again will let we use the useRequest
-    setTimeout(() => {
-      setReadyToSubmit(false)
-    }, 1000)
+    if (Object.keys(errors).length === 0) {
+      try {
+        setLoading(true)
+        await axios.post(loginUri, credentials)
+      } catch (error) {
+        setError(error?.response?.data?.message)
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   return (
     <>
-      <Box component="form" onSubmit={handleSubmit}>
+      <AuthInterceptors />
+      <Box component="form" onSubmit={HandleSubmit}>
         {inputs.map((input, index) => (
           <Fragment key={index}>
             <TextField

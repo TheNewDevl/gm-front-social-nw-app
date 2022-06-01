@@ -33,10 +33,10 @@ export function usePostRequest(
       )
       const dataApi = await response.json()
 
-      /*     if (response.status >= 400) {
+      if (response.status >= 400) {
         setError(dataApi.message)
       }
-      console.log(dataApi.message) */
+      console.log(dataApi.message)
 
       if (
         response.status === 201 &&
