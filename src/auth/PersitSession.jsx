@@ -8,7 +8,6 @@ const PersitSession = () => {
   const [isLoading, setisLoading] = useState(true)
   const refresh = useRefreshToken()
   const { user, remember } = useContext(UserContext)
-  console.log(remember)
 
   useEffect(() => {
     const checkRefreshTokenValidity = async () => {

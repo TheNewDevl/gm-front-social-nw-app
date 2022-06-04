@@ -55,8 +55,15 @@ function Login() {
       try {
         setLoading(true)
         await axios.post(loginUri, credentials)
-      } catch (error) {
-        setError(error?.response?.data?.message)
+      } catch (err) {
+        if (err?.response?.data?.message) {
+          setError(err.response.data.message)
+        } else if (err?.request) {
+          setError('Pas de réponse du serveur')
+        } else {
+          setError(err.message)
+          console.log(err)
+        }
       } finally {
         setLoading(false)
       }

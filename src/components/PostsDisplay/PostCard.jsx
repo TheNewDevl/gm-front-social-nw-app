@@ -140,7 +140,7 @@ export default function PostCard({ post }) {
       )}
 
       <CardContent>
-        <Typography variant="body1" color="text.">
+        <Typography whiteSpace="pre-wrap" variant="body1" color="text.">
           {post.text}
         </Typography>
       </CardContent>

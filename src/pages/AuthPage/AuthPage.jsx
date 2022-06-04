@@ -1,6 +1,5 @@
-import * as React from 'react'
+import { useEffect, useContext, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useState } from 'react'
 import Login from './LoginForm'
 import SignUp from './SignupForm'
 import Paper from '@mui/material/Paper'
@@ -13,12 +12,11 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { useContext } from 'react'
 import { UserContext } from '../../utils/context/UserContext'
-import ProfileForm from '../../components/ProfileForm/ProfileForm'
 
 import homeIllustration from '../../assets/home-illustration.jpg'
 import darkHomeIllustration from '../../assets/darkmode-home-illustration.jpg'
+import CreateProfileDiag from './CreateProfileDiag'
 
 function Home() {
   const { user, hasProfile } = useContext(UserContext)
@@ -27,6 +25,14 @@ function Home() {
   //used to display sign up or login form
   const [hasAccount, setHasAccount] = useState(true)
   const [toggleValue, settoggleValue] = useState('login')
+
+  const [openPopUp, setOpenPopUp] = useState(false)
+
+  useEffect(() => {
+    if (user && user.user?.hasProfile === 0) {
+      setOpenPopUp(true)
+    }
+  }, [user])
 
   const handleClick = (e) => {
     const value = e.currentTarget.value
@@ -65,14 +71,16 @@ function Home() {
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <Box
           sx={{
-            my: 8,
+            my: 4,
             mx: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h4" color="primary.main">
+          <Typography
+            sx={{ textAlign: 'center' }}
+            component="h1"
+            variant="h4"
+            color="primary.main"
+          >
             GROUPOMANIA
           </Typography>
           <Typography
@@ -81,16 +89,11 @@ function Home() {
             sx={{ textAlign: 'center' }}
             color="primary.light"
           >
-            Rejoignez vous vite afin de consulter les dernières nouvelles
+            Rejoignez nous vite afin de consulter les dernières nouvelles
           </Typography>
           <Box
             sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              borderTopRightRadius: '200px',
+              m: 4,
             }}
           >
             {!user && (
@@ -111,7 +114,8 @@ function Home() {
             {!user && hasAccount && <Login />}
             {!user && !hasAccount && <SignUp />}
             {user && user.user.hasProfile === 0 && (
-              <>
+              <CreateProfileDiag open={openPopUp} />
+              /*  <>
                 <Typography
                   variant="h6"
                   component="h2"
@@ -123,7 +127,7 @@ function Home() {
                   profil.
                 </Typography>
                 <ProfileForm method={'POST'} />
-              </>
+              </> */
             )}
           </Box>
         </Box>

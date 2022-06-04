@@ -10,10 +10,7 @@ const useSecureAxios = () => {
   useEffect(() => {
     const reqInterceptor = secureAxios.interceptors.request.use(
       (config) => {
-        console.log(user.user.token)
         if (!config.headers['Authorization']) {
-          console.log('in the if statement')
-          console.log({ userStateToken: user?.user?.token })
           config.headers['Authorization'] = `Bearer ${user?.user?.token}`
         }
         return config
@@ -28,10 +25,8 @@ const useSecureAxios = () => {
       async (error) => {
         const initialRequest = error?.config
         if (error?.response.status === 401 && !initialRequest?.retry) {
-          console.log('RETRYYYYY')
           initialRequest.retry = true
           const newToken = await refresh()
-          console.log(newToken)
           initialRequest.headers['Authorization'] = `Bearer ${newToken}`
           return secureAxios(initialRequest)
         }

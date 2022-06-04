@@ -11,14 +11,13 @@ import {
 import { useContext } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { UserContext } from '../../utils/context/UserContext'
-import './ProfileForm.scss'
 import { useFetch } from '../../utils/hooks/custom.hooks'
-import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Loader from '../../components/Loader/Loader'
 import { PhotoCamera } from '@mui/icons-material'
 import { useTheme } from '@mui/material'
 import { AuthInterceptors } from '../../interceptors/AuthInterceptors'
 import axios from '../../api/axios'
+import { profileValidation } from '../../utils/validators'
 
 function ProfileForm({ method }) {
   const theme = useTheme()
@@ -33,7 +32,7 @@ function ProfileForm({ method }) {
   })
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
-  const [formErrors] = useState({})
+  const [formErrors, setFormErrors] = useState(null)
   const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
   const [profileId, setProfileId] = useState('')
@@ -76,49 +75,55 @@ function ProfileForm({ method }) {
   }
 
   const handleSubmit = async (e) => {
-    setLoading(true)
     e.preventDefault()
-    const data = new FormData()
-    //append file only if file exists (back requirement)
-    file.file && data.append('file', file.file)
-    data.append('firstName', profileInputs.firstName)
-    data.append('lastName', profileInputs.lastName)
-    data.append('bio', profileInputs.bio)
-    try {
-      if (method === 'POST') {
-        await axios.post(uri, data, {
-          headers: { Authorization: `Bearer ${user.user.token}` },
-        })
-      }
 
-      if (method === 'PATCH') {
-        await axios.patch(uri, data, {
-          headers: { Authorization: `Bearer ${user.user.token}` },
+    // Validate imputs
+    const errors = profileValidation(profileInputs)
+    setFormErrors(errors)
+
+    if (Object.keys(errors).length === 0) {
+      setLoading(true)
+      const data = new FormData()
+      //append file only if file exists (back requirement)
+      file.file && data.append('file', file.file)
+      data.append('firstName', profileInputs.firstName)
+      data.append('lastName', profileInputs.lastName)
+      data.append('bio', profileInputs.bio)
+      try {
+        if (method === 'POST') {
+          await axios.post(uri, data, {
+            headers: { Authorization: `Bearer ${user.user.token}` },
+          })
+        }
+
+        if (method === 'PATCH') {
+          await axios.patch(uri, data, {
+            headers: { Authorization: `Bearer ${user.user.token}` },
+          })
+        }
+        setAlertStates({
+          open: true,
+          type: 'success',
+          message: 'Modifications enregistrées !',
         })
+      } catch (err) {
+        if (err?.response?.data?.message) {
+          setError(err.response.data.message)
+        } else if (err?.request) {
+          setError('Pas de réponse du serveur')
+        } else {
+          setError(err.message)
+          console.log(err)
+        }
+      } finally {
+        setLoading(false)
       }
-      setAlertStates({
-        open: true,
-        type: 'success',
-        message: 'Modifications enregistrées !',
-      })
-    } catch (err) {
-      if (err.response) {
-        setError(err.response.data.message)
-      } else if (err.request) {
-        setError('Pas de réponse du serveur')
-      } else {
-        setError(err.message)
-        console.log(err)
-      }
-      setAlertStates({
-        open: true,
-        type: 'error',
-        message: error,
-      })
-    } finally {
-      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    error && setAlertStates({ open: true, type: 'error', message: error })
+  }, [error])
 
   return (
     <>
@@ -129,74 +134,75 @@ function ProfileForm({ method }) {
         <Box component="form" onSubmit={handleSubmit}>
           {data || file.urlForPreview ? (
             <Avatar
-              className="profilePic"
-              sx={{ width: 150, height: 150 }}
+              sx={{ width: 150, height: 150, margin: '1em auto' }}
               src={file.urlForPreview ? file.urlForPreview : data.photo}
               alt="Photo de profil"
             />
           ) : null}
           {/* firstName */}
-          <div className="names__container">
-            <TextField
-              className="input__name"
-              variant="standard"
-              margin="normal"
-              required
-              autoFocus
-              label="Prénom"
-              name="firstName"
-              type="text"
-              value={profileInputs.firstName}
-              onChange={handleValues}
-              error={formErrors.firstname ? true : false}
-            />
+          <Stack direction="row" columnGap="2em" justifyContent="space-between">
+            <Stack width="100%">
+              <TextField
+                fullWidth
+                variant="standard"
+                margin="normal"
+                required
+                autoFocus
+                label="Prénom"
+                name="firstName"
+                type="text"
+                value={profileInputs.firstName}
+                onChange={handleValues}
+                error={formErrors?.firstName ? true : false}
+              />
+              <Typography component="span" variant="body2" color="error.light">
+                {formErrors?.firstName}
+              </Typography>
+            </Stack>
 
             {/* lastName */}
-            <TextField
-              className="input__name"
-              variant="standard"
-              margin="normal"
-              required
-              label="Nom"
-              name="lastName"
-              type="text"
-              value={profileInputs.lastName}
-              onChange={handleValues}
-              error={formErrors.lastName ? true : false}
-            />
-          </div>
-          <Typography component="span" variant="body2" color="error.light">
-            {formErrors.lastName}
-          </Typography>
-          <Typography component="span" variant="body2" color="error.light">
-            {formErrors.firstName}
-          </Typography>
+
+            <Stack width="100%">
+              <TextField
+                fullWidth
+                variant="standard"
+                margin="normal"
+                required
+                label="Nom"
+                name="lastName"
+                type="text"
+                value={profileInputs.lastName}
+                onChange={handleValues}
+                error={formErrors?.lastName ? true : false}
+              />
+              <Typography component="span" variant="body2" color="error.light">
+                {formErrors?.lastName}
+              </Typography>
+            </Stack>
+          </Stack>
+
           <br />
           {/* BIO */}
-          <TextareaAutosize
-            style={{ backgroundColor: `${theme.palette.background.default}` }}
-            sx={{
-              resize: 'none',
-              backgroundColor: `${theme.palette.background.default}`,
-            }}
-            className="bio__input"
-            required
-            minRows={4}
-            name="bio"
+          <TextField
+            id="standard-multiline-static"
             aria-label="A propos de vous"
-            placeholder="Quelques mots à propos de vous"
+            label={`Quelques mots à propos de vous `}
+            name="bio"
+            required
+            fullWidth
+            minRows={3}
+            multiline
+            variant="outlined"
             value={profileInputs.bio}
             onChange={handleValues}
+            error={formErrors?.bio ? true : false}
           />
-          <label className="bio__label" htmlFor="bio">
-            A propos de moi *
-          </label>
-          <Typography component="span" variant="body2" color="error.light">
-            {formErrors.bio}
-          </Typography>
-          <br />
-          {/* Avatar */}
 
+          <Typography component="span" variant="body2" color="error.light">
+            {formErrors?.bio}
+          </Typography>
+
+          {/* Avatar */}
           {/* Api errors */}
           {error && (
             <Typography component="span" variant="body1" color="error.light">
@@ -204,8 +210,7 @@ function ProfileForm({ method }) {
             </Typography>
           )}
           <Stack
-            mt="1em"
-            // direction={theme.breakpoints.up('sm') && 'row'}
+            mt="2em"
             justifyContent="center"
             flexWrap="wrap"
             gap={1}
@@ -223,11 +228,10 @@ function ProfileForm({ method }) {
                 variant="outlined"
                 component="label"
               >
-                Image
-                <PhotoCamera className="upload__icon" />
+                Avatar
+                <PhotoCamera sx={{ ml: '1em' }} />
                 <input
                   sx={{ marginTop: '1em' }}
-                  className="upload__input"
                   accept="image/*"
                   type="file"
                   name="file"

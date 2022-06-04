@@ -1,67 +1,24 @@
 import Loader from '../Loader/Loader'
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useContext, useEffect } from 'react'
 import { PostsContext } from '../../utils/context/PostsContext'
 import Typography from '@mui/material/Typography'
 import './PostsDisplay.scss'
 import PostCard from './PostCard'
-import useSecureAxios from '../../utils/hooks/useSecureAxios'
+import useLoadPosts from '../../utils/hooks/useGetPosts'
+import PropTypes from 'prop-types'
 
-function PostsDisplay() {
-  const { data, setData } = useContext(PostsContext)
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const queryRefs = useRef({
-    limit: 10,
-    offset: 0,
-    count: 0,
-  })
-  const secureAxios = useSecureAxios()
-  const uri = `posts/?limit=${queryRefs.current.limit}&offset=${queryRefs.current.offset}`
+function PostsDisplay({ id }) {
+  const { noContent, setNoContent, data, setData, error, isLoading } =
+    useContext(PostsContext)
 
-  //get posts with pagination with uploading offset while scrolling the page
-  const loadPosts = async () => {
-    //prevent bad request using the count query
-    if (
-      queryRefs.current.offset > 0 &&
-      queryRefs.current.offset >= queryRefs.current.count
-    ) {
-      return
-    }
-    if (
-      queryRefs.current.offset > 0 &&
-      queryRefs.current.count - queryRefs.current.offset <
-        queryRefs.current.limit
-    ) {
-      queryRefs.current.limit =
-        queryRefs.current.count - queryRefs.current.offset
-    }
-    try {
-      setIsLoading(true)
-      const res = await secureAxios.get(uri)
-      setData((data) => [...data, ...res.data[0]])
-      queryRefs.current.count = res.data[1]
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message)
-      } else if (error.request) {
-        setError('Pas de réponse du serveur')
-      } else {
-        setError(error.message)
-        console.log(error)
-      }
-    } finally {
-      setIsLoading(false)
-      queryRefs.current.offset += queryRefs.current.limit
-    }
-  }
+  const loadPosts = useLoadPosts(id)
 
-  //load more data a little bite before the end of the page
-  const handleScroll = (e) => {
+  const handleScroll = async (e) => {
     if (
       window.innerHeight + e.target.documentElement.scrollTop >=
-      e.target.documentElement.scrollHeight
+      e.target.documentElement.scrollHeight // at the bottem => need
     ) {
-      loadPosts()
+      await loadPosts()
     }
   }
 
@@ -69,9 +26,11 @@ function PostsDisplay() {
   useEffect(() => {
     loadPosts()
     window.addEventListener('scroll', handleScroll)
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
       setData([])
+      setNoContent(false)
     }
   }, [])
 
@@ -83,12 +42,23 @@ function PostsDisplay() {
       </Typography>
     )
   }
+
   return (
     <div>
-      {data && data.map((post) => <PostCard key={post.id} post={post} />)}
+      {data.length > 0 &&
+        data.map((post) => <PostCard key={post.id} post={post} />)}
       {isLoading && <Loader />}
+      {noContent && (
+        <Typography sx={{ textAlign: 'center' }} variant="button" component="p">
+          Aucune autre publication à afficher
+        </Typography>
+      )}
     </div>
   )
+}
+
+PostsDisplay.propTypes = {
+  id: PropTypes.string,
 }
 
 export default PostsDisplay

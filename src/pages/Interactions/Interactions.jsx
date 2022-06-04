@@ -1,6 +1,12 @@
 import { useContext, useState } from 'react'
 import { UserContext } from '../../utils/context/UserContext'
-import { ToggleButton, ToggleButtonGroup } from '@mui/material'
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  Divider,
+} from '@mui/material'
+import PostsDisplay from '../../components/PostsDisplay/PostsDisplay'
 
 function Interactions() {
   const { user } = useContext(UserContext)
@@ -23,16 +29,34 @@ function Interactions() {
 
       {display === 'interactions' ? (
         <div>
-          <h1>Mes publications</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque euismod, urna eu tempor congue, nisi nunc tristique
-            nunc, euismod egestas nisl nisi euismod.
-          </p>
+          <Typography
+            component="h1"
+            variant="overline"
+            fontSize="1.5em"
+            fontWeight="900"
+            margin="1em"
+            textAlign="center"
+            color="primary"
+          >
+            Mes publications
+          </Typography>
+          <Divider sx={{ mb: '2em' }} />
+          <PostsDisplay id={user.user.id} />
         </div>
       ) : (
         <div>
-          <h1>Mes commentaires</h1>
+          <Typography
+            component="h1"
+            variant="overline"
+            fontSize="1.5em"
+            fontWeight="900"
+            margin="1em"
+            textAlign="center"
+            color="primary"
+          >
+            Mes publications
+          </Typography>
+          <Divider sx={{ mb: '2em' }} />
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             Pellentesque euismod, urna eu tempor congue, nisi nunc tristique

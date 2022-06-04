@@ -1,10 +1,10 @@
 import {
   Typography,
   Button,
-  TextareaAutosize,
   Stack,
   CircularProgress,
-  Box,
+  TextField,
+  CardMedia,
 } from '@mui/material'
 import React from 'react'
 import { PhotoCamera } from '@mui/icons-material'
@@ -32,7 +32,14 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
     if (inputs.urlForPreview) {
       return (
         <div className="img_container">
-          <img src={inputs.urlForPreview} alt="preview" />
+          <CardMedia
+            component="img"
+            image={inputs.urlForPreview}
+            alt="Paella dish"
+          />
+          <CardMedia image={inputs.urlForPreview} src={inputs.urlForPreview} />
+
+          {/*  <img src={inputs.urlForPreview} alt="preview" /> */}
         </div>
       )
     }
@@ -40,20 +47,23 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Typography component="label" variant="overline" htmlFor="text">
-        Une anecdote ? Une info à partager ? Une photo ? C'est par ici !
-        <TextareaAutosize
-          className="bio__input"
-          required
-          minRows={7}
-          maxRows={20}
-          name="text"
-          aria-label="saisie du contenu textuel"
-          value={inputs.text}
-          onChange={handleText}
-          placeholder="Ecrivez quelque chose"
-        />
-      </Typography>
+      <TextField
+        required
+        multiline
+        minRows={5}
+        maxRows={10}
+        name="text"
+        aria-label="saisie du contenu textuel"
+        type="text"
+        value={inputs.text}
+        onChange={handleText}
+        label="Une anecdote ? Une info à partager ? Une photo ? C'est par ici !"
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        error={error ? true : false}
+      />
+
       <ImgPreview />
 
       {error && (
@@ -61,13 +71,19 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
           {error}
         </Typography>
       )}
-      <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
+      <Stack
+        mt="1em"
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        flexWrap="wrap"
+        gap={1}
+      >
         <label htmlFor="file">
           <Button variant="outlined" component="label">
             Image
-            <PhotoCamera className="upload__icon" />
+            <PhotoCamera sx={{ ml: '1em' }} />
             <input
-              className="upload__input"
               accept="image/*"
               id="file"
               type="file"
@@ -78,7 +94,8 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
         </label>
         {inputs.urlForPreview && (
           <Button variant="outlined" color="error" onClick={handleDete}>
-            Supprimer <PhotoCamera className="upload__icon" />
+            Supprimer
+            <PhotoCamera sx={{ ml: '1em' }} />
           </Button>
         )}
         <Button
@@ -90,7 +107,7 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
             <CircularProgress size={'1.7em'} />
           ) : (
             <>
-              Publier <SendIcon className="upload__icon" />
+              Publier <SendIcon sx={{ ml: '1em' }} />
             </>
           )}
         </Button>

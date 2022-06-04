@@ -11,6 +11,7 @@ import { UserContext } from '../../utils/context/UserContext'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import PostForm from '../PostForm/PostForm'
+import { postValidation } from '../../utils/validators'
 
 function CreatePost() {
   const { user } = useContext(UserContext)
@@ -53,6 +54,16 @@ function CreatePost() {
     setLoading(true)
     try {
       e.preventDefault()
+      const formError = postValidation(inputs)
+      setError(formError.text)
+      if (formError.text) {
+        return setAlertStates({
+          open: true,
+          type: 'error',
+          message: formError.text,
+        })
+      }
+
       const data = new FormData()
       data.append('file', inputs.file)
       data.append('text', inputs.text)
