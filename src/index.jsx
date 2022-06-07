@@ -5,6 +5,7 @@ import { UserProvider } from './utils/context/UserContext'
 import { PostsProvider } from './utils/context/PostsContext'
 import { AlertProvider } from './utils/context/AlertContext'
 import { DarkModeProvider } from './utils/context/DarkModeContex'
+import { RequestsProvider } from './utils/context/RequestsContext'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
@@ -13,7 +14,9 @@ root.render(
     <PostsProvider>
       <AlertProvider>
         <DarkModeProvider>
-          <App />
+          <RequestsProvider>
+            <App />
+          </RequestsProvider>
         </DarkModeProvider>
       </AlertProvider>
     </PostsProvider>

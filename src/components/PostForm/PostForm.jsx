@@ -11,7 +11,7 @@ import { PhotoCamera } from '@mui/icons-material'
 import SendIcon from '@mui/icons-material/Send'
 
 function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
-  //Set states for Fetch Request
+  //Set states for api Request
   const handleText = (e) => {
     setInputs({ ...inputs, text: e.target.value })
   }

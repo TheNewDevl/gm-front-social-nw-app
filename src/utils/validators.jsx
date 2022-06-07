@@ -1,5 +1,4 @@
 import {
-  isAlpha,
   isAlphanumeric,
   isEmail,
   isNotEmpty,
@@ -75,12 +74,12 @@ export const postValidation = (data) => {
 export const profileValidation = (data) => {
   let error = {}
 
-  if (!isAlpha(data.firstName) || !minLength(data.firstName, 3)) {
+  if (!isString(data.firstName) || !minLength(data.firstName, 3)) {
     error.firstName =
       'Le prénom ne doit comporter que des lettres, 3 caractères min'
   }
 
-  if (!isAlpha(data.lastName) || !minLength(data.lastName, 3)) {
+  if (!isString(data.lastName) || !minLength(data.lastName, 3)) {
     error.lastName =
       'Le nom ne doit comporter que des lettres, 3 caractères min'
   }

@@ -43,7 +43,7 @@ function Home() {
   }
 
   // if an user is set, redirect to the posts page
-  if (user && (user.user.hasProfile === 1 || hasProfile === '1'))
+  if (user && (user.user.hasProfile === 1 || hasProfile === true))
     return <Navigate to="/" replace />
 
   return (
@@ -115,19 +115,6 @@ function Home() {
             {!user && !hasAccount && <SignUp />}
             {user && user.user.hasProfile === 0 && (
               <CreateProfileDiag open={openPopUp} />
-              /*  <>
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  sx={{ textAlign: 'center' }}
-                  color="success.light"
-                >
-                  Votre compte a été créé avec succes ! <br />
-                  Aidez vos collègues à mieux vous connaître en complétant votre
-                  profil.
-                </Typography>
-                <ProfileForm method={'POST'} />
-              </> */
             )}
           </Box>
         </Box>

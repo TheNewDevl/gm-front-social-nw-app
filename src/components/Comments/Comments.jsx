@@ -1,17 +1,75 @@
 import CommentCard from './CommentCard'
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Loader from '../Loader/Loader'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { RequestsContext } from '../../utils/context/RequestsContext'
+import { AlertContext } from '../../utils/context/AlertContext'
 
-function Comments({
-  getCommentsfn,
-  queryComRefs,
-  comments,
-  isLoading,
-  error,
-  setDataComment,
-}) {
+export const defaultScroll = () => {
+  const commentsContainer = document.querySelector('#comments__Container')
+  commentsContainer.scrollTop = commentsContainer.scrollHeight
+}
+
+function Comments({ comments, setDataComment, post }) {
+  const {
+    isLoading,
+    requestData,
+    setRequestData,
+    requestError,
+    setRequestError,
+    makeRequest,
+  } = useContext(RequestsContext)
+  const { setAlertStates } = useContext(AlertContext)
+  const [error, setError] = useState()
+  const queryComRefs = useRef({
+    limit: 5,
+    offset: 0,
+    count: 0,
+  })
+
+  //to auto scroll when create new comments or open component
+  useEffect(() => {
+    defaultScroll()
+  }, [comments])
+
+  //API request
+  const getComments = async () => {
+    try {
+      const uri = `comment/post/${post.id}/?limit=${queryComRefs.current.limit}&offset=${queryComRefs.current.offset}`
+      const method = 'get'
+      await makeRequest(method, uri)
+    } catch (err) {
+      setAlertStates({ open: true, type: 'error', message: `${err}` })
+    } finally {
+      queryComRefs.current.offset += queryComRefs.current.limit
+    }
+  }
+
+  //catch request data
+  useEffect(() => {
+    if (requestData && requestData.comments) {
+      setDataComment((data) => [...requestData.comments[0].reverse(), ...data])
+      queryComRefs.current.count = requestData.comments[1]
+    }
+    return () => setRequestData('')
+  }, [requestData, setRequestData, queryComRefs, setDataComment])
+
+  //get comments
+  useEffect(() => {
+    if (queryComRefs.current.offset === 0) {
+      getComments()
+    }
+    return () => setDataComment([])
+  }, [])
+
+  //catch request errors and use it
+  useEffect(() => {
+    requestError && setError(requestError)
+    return () => setRequestError('')
+  }, [requestError, setRequestError])
+
+  // display 'afficher plus' only if there are more comments to display
   const GetMoreComments = () => {
-    // display 'afficher plus' only if there are more comments to display
     if (
       comments &&
       queryComRefs.current.count > 0 &&
@@ -24,7 +82,7 @@ function Comments({
           variant="caption"
           sx={{ display: 'block', cursor: 'pointer' }}
           align="center"
-          onClick={getCommentsfn}
+          onClick={getComments}
         >
           Afficher précédents
         </Typography>
@@ -33,11 +91,19 @@ function Comments({
   }
 
   if (error) {
-    return <div>{error.message}</div>
+    return (
+      <Typography componenent="div" variant="subtitle2" color="error">
+        {`${error}`}
+      </Typography>
+    )
   }
 
   return (
-    <div className="comments__container">
+    <Box
+      maxHeight="50vh"
+      sx={{ overflowY: 'scroll', scrollBehavior: 'smooth' }}
+      id="comments__Container"
+    >
       {isLoading && <Loader />}
       <GetMoreComments />
       {comments &&
@@ -50,7 +116,7 @@ function Comments({
             />
           </div>
         ))}
-    </div>
+    </Box>
   )
 }
 

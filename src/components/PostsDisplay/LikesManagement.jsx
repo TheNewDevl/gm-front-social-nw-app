@@ -3,14 +3,22 @@ import { IconButton } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
+import { RequestsContext } from '../../utils/context/RequestsContext'
 import { UserContext } from '../../utils/context/UserContext'
+
 function LikesManagement({ post }) {
   const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
-
   const [likesCount, setLikesCount] = useState(0)
-  const [error, setError] = useState()
+
+  const {
+    requestData,
+    requestError,
+    setRequestError,
+    setRequestData,
+    makeRequest,
+  } = useContext(RequestsContext)
 
   //display number of likes per post
   useEffect(() => {
@@ -31,7 +39,7 @@ function LikesManagement({ post }) {
       setAlertStates({
         open: true,
         type: 'info',
-        message: `${post.user.username} est triste que vous n'aimiez plus son post !`,
+        message: `${post.user.username} est triste que vous n'aimiez plus sa publication !`,
       })
     } else {
       startLikes.push({ id: user.user.id })
@@ -46,35 +54,22 @@ function LikesManagement({ post }) {
     setData(oldData)
   }
 
+  //clean request errors
+  useEffect(() => {
+    requestData?.message === 'Like enregistré' && setRequestData('')
+    requestData?.message === 'Like supprimé' && setRequestData('')
+    requestError && setRequestError(undefined)
+  }, [requestData, setRequestData, requestError, setRequestError])
+
   const handleLike = async () => {
     const body = post.likes.find((p) => p.id === user.user.id)
       ? { like: 'unlike' }
       : { like: 'like' }
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}posts/likes/${post.id}`,
-        {
-          method: 'PATCH',
-          body: JSON.stringify(body),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      if (res.ok) {
-        updateDom(body.like)
-      } else {
-        console.log(res)
-      }
-    } catch (error) {
-      setError(error.message)
-      setAlertStates({
-        open: true,
-        type: 'error',
-        message: { error },
-      })
-      console.log(error)
+      await makeRequest('patch', `posts/likes/${post.id}`, body)
+      updateDom(body.like)
+    } catch (err) {
+      setAlertStates({ open: true, type: 'error', message: `${err}` })
     }
   }
 

@@ -1,7 +1,4 @@
-import React, { useEffect, useContext } from 'react'
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-
 import AuthPage from './pages/AuthPage/AuthPage'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
@@ -24,9 +21,8 @@ function App() {
         <FeedBackAlert />
 
         <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-
           <Route element={<PersitSession />}>
+            <Route path="/auth" element={<AuthPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Home />} />
               <Route path="/profile/" element={<Profile />} />

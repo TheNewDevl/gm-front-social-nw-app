@@ -7,18 +7,36 @@ import {
   DialogTitle,
   IconButton,
 } from '@mui/material'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { PostsContext } from '../../utils/context/PostsContext'
-import { UserContext } from '../../utils/context/UserContext'
 import { AlertContext } from '../../utils/context/AlertContext'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { RequestsContext } from '../../utils/context/RequestsContext'
+import { UserContext } from '../../utils/context/UserContext'
 
 function DeletePost({ post }) {
   const { data, setData } = useContext(PostsContext)
   const { setAlertStates } = useContext(AlertContext)
-  const { user } = useContext(UserContext)
   const [openPopUp, setOpenPopUp] = useState(false)
-  const [error, setError] = useState()
+  const { user } = useContext(UserContext)
+  const {
+    requestData,
+    requestError,
+    setRequestError,
+    makeRequest,
+    setRequestData,
+  } = useContext(RequestsContext)
+
+  //if get a new post from request, updateDom and clean context
+  useEffect(() => {
+    if (requestData && requestData.messsage === 'Publication supprimée !') {
+      setRequestData('')
+    }
+  }, [requestData, setRequestData, data, setData])
+  //clean error context
+  useEffect(() => {
+    requestError && setRequestError(undefined)
+  }, [requestError, setRequestError])
 
   //Update data state to delete the post from the DOM
   const updateDom = () => {
@@ -27,44 +45,18 @@ function DeletePost({ post }) {
     setData(newData)
   }
 
-  //Delete API request
   const handleDelete = async (e) => {
     try {
       e.preventDefault()
-      const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}posts/${post.id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-
-      let parsedRes = await response.json()
-      if (response.ok) {
-        setAlertStates({
-          open: true,
-          type: 'success',
-          message: 'Publication supprimée !',
-        })
-        updateDom()
-      } else {
-        setError(parsedRes.message)
-        setAlertStates({
-          open: true,
-          type: 'error',
-          message: parsedRes.message,
-        })
-      }
-    } catch (error) {
-      setError(error.message)
-      console.log(error)
+      await makeRequest('delete', `posts/${post.id}`)
       setAlertStates({
         open: true,
-        type: 'error',
-        message: error.message,
+        type: 'success',
+        message: 'Publication supprimée !',
       })
+      updateDom()
+    } catch (err) {
+      setAlertStates({ open: true, type: 'error', message: `${err}` })
     }
   }
 

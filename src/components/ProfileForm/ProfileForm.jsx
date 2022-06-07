@@ -11,13 +11,12 @@ import {
 import { useContext } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { UserContext } from '../../utils/context/UserContext'
-import { useFetch } from '../../utils/hooks/custom.hooks'
 import Loader from '../../components/Loader/Loader'
 import { PhotoCamera } from '@mui/icons-material'
 import { useTheme } from '@mui/material'
 import { AuthInterceptors } from '../../interceptors/AuthInterceptors'
-import axios from '../../api/axios'
 import { profileValidation } from '../../utils/validators'
+import { RequestsContext } from '../../utils/context/RequestsContext'
 
 function ProfileForm({ method }) {
   const theme = useTheme()
@@ -31,15 +30,23 @@ function ProfileForm({ method }) {
     urlForPreview: null,
   })
   const [error, setError] = useState()
-  const [loading, setLoading] = useState(false)
   const [formErrors, setFormErrors] = useState(null)
   const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
   const [profileId, setProfileId] = useState('')
-  const uri = `profile/${profileId}`
+  const uri = method === 'POST' ? 'profile' : `profile/${profileId}`
+
+  const { useGetData } = useContext(RequestsContext)
+  const {
+    requestData,
+    requestError,
+    setRequestError,
+    makeRequest,
+    setRequestData,
+  } = useContext(RequestsContext)
 
   //if the profile has already been created, the fields are pre-filled with the profile data
-  const { data, isLoading } = useFetch(`profile/${user.user.id}`)
+  const { data, isLoading } = useGetData(`profile/${user.user.id}`)
   useEffect(() => {
     if (data) {
       setprofileInputs({
@@ -50,6 +57,15 @@ function ProfileForm({ method }) {
       setProfileId(data.id)
     }
   }, [data])
+
+  //clean request states
+  useEffect(() => {
+    return () => {
+      setError(requestError)
+      setRequestData('')
+      setRequestError(undefined)
+    }
+  }, [requestData, requestError, setRequestData, setRequestError])
 
   //set input values to credentials state
   const handleValues = (e) => {
@@ -76,54 +92,30 @@ function ProfileForm({ method }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     // Validate imputs
     const errors = profileValidation(profileInputs)
     setFormErrors(errors)
 
     if (Object.keys(errors).length === 0) {
-      setLoading(true)
       const data = new FormData()
       //append file only if file exists (back requirement)
       file.file && data.append('file', file.file)
       data.append('firstName', profileInputs.firstName)
       data.append('lastName', profileInputs.lastName)
       data.append('bio', profileInputs.bio)
-      try {
-        if (method === 'POST') {
-          await axios.post(uri, data, {
-            headers: { Authorization: `Bearer ${user.user.token}` },
-          })
-        }
 
-        if (method === 'PATCH') {
-          await axios.patch(uri, data, {
-            headers: { Authorization: `Bearer ${user.user.token}` },
-          })
-        }
+      try {
+        await makeRequest(method.toLowerCase(), uri, data)
         setAlertStates({
           open: true,
           type: 'success',
           message: 'Modifications enregistrées !',
         })
       } catch (err) {
-        if (err?.response?.data?.message) {
-          setError(err.response.data.message)
-        } else if (err?.request) {
-          setError('Pas de réponse du serveur')
-        } else {
-          setError(err.message)
-          console.log(err)
-        }
-      } finally {
-        setLoading(false)
+        setAlertStates({ open: true, type: 'error', message: `${err}` })
       }
     }
   }
-
-  useEffect(() => {
-    error && setAlertStates({ open: true, type: 'error', message: error })
-  }, [error])
 
   return (
     <>
@@ -258,9 +250,9 @@ function ProfileForm({ method }) {
               }}
               type="submit"
               variant="contained"
-              disabled={loading ? true : false}
+              disabled={isLoading ? true : false}
             >
-              {loading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
+              {isLoading ? <CircularProgress size={'1.7em'} /> : 'Sauvegarder'}
             </Button>
           </Stack>
         </Box>

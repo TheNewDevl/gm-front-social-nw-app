@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 function PostsDisplay({ id }) {
   const { noContent, setNoContent, data, setData, error, isLoading } =
     useContext(PostsContext)
-
+  console.log(id)
   const loadPosts = useLoadPosts(id)
 
   const handleScroll = async (e) => {

@@ -12,16 +12,24 @@ import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
 import { UserContext } from '../../utils/context/UserContext'
 import PostForm from '../PostForm/PostForm'
+import { RequestsContext } from '../../utils/context/RequestsContext'
+import { postValidation } from '../../utils/validators'
 
 function UpdatePost({ post }) {
   const { setAlertStates } = useContext(AlertContext)
   const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
+  const {
+    requestData,
+    requestError,
+    setRequestError,
+    isLoading,
+    makeRequest,
+    setRequestData,
+  } = useContext(RequestsContext)
+  const [error, setError] = useState(false)
 
   const [openDialog, setOpenDialog] = useState(false)
-
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   const [updateInputs, setUpdateInputs] = useState({
     text: '',
@@ -38,69 +46,57 @@ function UpdatePost({ post }) {
       })
   }, [post])
 
-  //update Request
-  const handleSubmit = async (e) => {
-    setLoading(true)
-    try {
-      e.preventDefault()
-      const data = new FormData()
-      data.append('file', updateInputs.file)
-      data.append('text', updateInputs.text)
-      const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}posts/${post.id}`,
-        {
-          method: 'PATCH',
-          body: data,
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      const updatedPost = await response.json()
+  //if get a new post from request, updateDom and clean context
+  useEffect(() => {
+    //update posts state to synchronize display and avoid a relaod
+    const updateDom = (updatedPost) => {
+      const oldData = [...data]
+      //find the index of the post
+      const index = oldData.findIndex((p) => p.id === updatedPost.id)
+      oldData[index].text = updatedPost.text
+      oldData[index].image = updatedPost.image
+      setData(oldData)
+    }
+    if (requestData && requestData.updatedPost) {
+      updateDom(requestData.updatedPost)
+    }
+    return () => setRequestData('')
+  }, [requestData, setRequestData, data, setData])
 
-      if (response.ok) {
-        setUpdateInputs({
-          text: '',
-          file: '',
-          urlForPreview: null,
-        })
-        setOpenDialog(false)
-        setAlertStates({
-          open: true,
-          type: 'success',
-          message: 'Modifications enregistrées !',
-        })
-        updateDom(updatedPost)
-      } else {
-        setError(updatedPost.message)
-        setAlertStates({
-          open: true,
-          type: 'error',
-          message: `${updatedPost.message}`,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      setError(error.message)
+  //catch request errors and use it
+  useEffect(() => {
+    requestError && setError(requestError)
+    return () => setRequestError(undefined)
+  }, [requestError, setRequestError])
 
-      setAlertStates({
-        open: true,
-        type: 'error',
-        message: { error },
-      })
-    } finally {
-      setLoading(false)
+  const validation = (inputs) => {
+    const formError = postValidation(inputs)
+    setError(formError.text)
+    if (formError.text) {
+      throw new Error(formError.text)
     }
   }
 
-  //update posts state to synchronize display and avoid a relaod
-  const updateDom = (updatedPost) => {
-    const oldData = [...data]
-    //find the index of the post
-    const index = oldData.findIndex((p) => p.id === post.id)
-    oldData[index].text = updatedPost.text
-    oldData[index].image = updatedPost.image
-    setData(oldData)
+  //update Request
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault()
+      validation(updateInputs)
+      const data = new FormData()
+      data.append('file', updateInputs.file)
+      data.append('text', updateInputs.text)
+      await makeRequest('patch', `posts/${post.id}`, data)
+
+      setUpdateInputs({ text: '', file: '', urlForPreview: null })
+      setOpenDialog(false)
+      setAlertStates({
+        open: true,
+        type: 'success',
+        message: 'Modifications enregistrées !',
+      })
+    } catch (err) {
+      setAlertStates({ open: true, type: 'error', message: `${err}` })
+    }
   }
 
   if (user.user.id === post.user.id || user.user.roles === 'admin') {
@@ -121,7 +117,7 @@ function UpdatePost({ post }) {
                 setInputs={setUpdateInputs}
                 error={error}
                 handleSubmit={handleSubmit}
-                loading={loading}
+                loading={isLoading}
               />
             </DialogContent>
             <DialogActions>

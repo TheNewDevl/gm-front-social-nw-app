@@ -31,18 +31,13 @@ export function AuthInterceptors() {
           loginCallBack(response.config.data)
           return response
         }
-        if (response?.data.message === 'Profil sauvegardé') {
-          setHasProfile('1')
-          sessionStorage.setItem('hasProfile', '1')
-          return response
-        }
       },
       (error) => Promise.reject(error)
     )
     return () => {
       axios.interceptors.response.eject(authInterceptors)
     }
-  }, [axios])
+  }, [setHasProfile, setUser])
 
   return ''
 }

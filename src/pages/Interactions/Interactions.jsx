@@ -54,14 +54,10 @@ function Interactions() {
             textAlign="center"
             color="primary"
           >
-            Mes publications
+            Mes commentaires
           </Typography>
           <Divider sx={{ mb: '2em' }} />
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque euismod, urna eu tempor congue, nisi nunc tristique
-            nunc, euismod egestas nisl nisi euismod.
-          </p>
+          <p>En cours de déployement</p>
         </div>
       )}
     </main>

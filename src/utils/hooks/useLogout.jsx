@@ -3,10 +3,11 @@ import { useContext } from 'react'
 import { UserContext } from '../context/UserContext'
 
 const useLogout = () => {
-  const { setUser } = useContext(UserContext)
+  const { setUser, setHasProfile } = useContext(UserContext)
 
   const logout = async () => {
     setUser('')
+    setHasProfile('')
     try {
       await axios.get('auth/logout')
     } catch (err) {

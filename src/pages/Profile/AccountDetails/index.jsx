@@ -1,22 +1,31 @@
 import { Button } from '@mui/material'
 import { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../../utils/context/UserContext'
-import { useFetch } from '../../../utils/hooks/custom.hooks'
 import Loader from '../../../components/Loader/Loader'
-import * as React from 'react'
 import PopUp from '../../../components/PopUp/PopUp'
 import signUpTime from '../../../utils/time-management'
 import DataTable from '../../../components/DataTable/DataTable'
+import useLogout from '../../../utils/hooks/useLogout'
+import { RequestsContext } from '../../../utils/context/RequestsContext'
+import { AlertContext } from '../../../utils/context/AlertContext'
 
 function AccountDetails() {
   const { user, setUser } = useContext(UserContext)
-  const { data, isLoading, error } = useFetch(`user/${user.user.id}`)
-
-  const [loading, setLoading] = useState(false)
   const [deleted, setDeleted] = useState(false)
-  const [deleteError, setDeleteError] = useState()
   const [deployed, setDeployed] = useState(false)
   const [displayData, setDisplayData] = useState()
+  const {
+    useGetData,
+    requestData,
+    requestError,
+    setRequestError,
+    isLoading,
+    makeRequest,
+    setRequestData,
+  } = useContext(RequestsContext)
+  const { data, error } = useGetData(`user/${user.user.id}`)
+  const { setAlertStates } = useContext(AlertContext)
+  const logout = useLogout()
 
   useEffect(() => {
     if (data) {
@@ -32,46 +41,40 @@ function AccountDetails() {
     }
   }, [data])
 
+  //clean request states
+  useEffect(() => {
+    requestData?.message === 'Utilisateur supprimé !' && setRequestData('')
+    deployed && requestError && setRequestError(undefined)
+  }, [])
+
   //display error if can't get data
-  if (error) return <span>Une erreur s'est produite</span>
+  if (error) return <span>{`${error}`}</span>
 
   const handlePopUp = () => setDeployed(true)
 
   const closePopUp = () => setDeployed(false)
 
-  const backToAuth = () => setUser('')
-
+  const backToAuth = async () => {
+    await logout()
+    setUser('')
+  }
   //post request to delete the account
   const handleDelete = async (e) => {
-    setLoading(true)
     try {
       e.preventDefault()
-      const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}user/${user.user.id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      const parsedRespose = await response.json()
-      console.log(parsedRespose)
-      if (parsedRespose.message === 'Utilisateur supprimé !') {
-        sessionStorage.clear()
-        setDeleted(true)
-        setDeployed(false)
-      }
-    } catch (error) {
-      console.log(error)
-      setDeleteError(error)
-    } finally {
-      setLoading(false)
+      await makeRequest('delete', `user/${user.user.id}`)
+      localStorage.clear()
+      setDeleted(true)
+      setDeployed(false)
+    } catch (err) {
+      console.log(err)
+      setAlertStates({
+        open: true,
+        type: 'error',
+        message: `Une erreur est survenue, contactez votre administrateur`,
+      })
     }
   }
-
-  //display any error during deletion
-  if (deleteError) return <span>{deleteError}</span>
 
   return (
     <div>
@@ -95,7 +98,7 @@ function AccountDetails() {
               passiveAction={closePopUp}
               passiveBtnText="Annuler"
               popUpMsg="Souhaitez-vous vraiment supprimer votre compte et toutes les données associées ? Si vous changez d'avis vous devrez créer un nouveau compte."
-              loading={loading}
+              loading={isLoading}
               activeAction={handleDelete}
             />
           )}

@@ -16,35 +16,30 @@ import {
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../../utils/context/UserContext'
-import { useFetch } from '../../utils/hooks/custom.hooks'
 import Loader from '../Loader/Loader'
 import useLogout from '../../utils/hooks/useLogout'
+import { RequestsContext } from '../../utils/context/RequestsContext'
 
 const HeaderMenu = () => {
   const logout = useLogout()
   const theme = useTheme()
   const { user, hasProfile } = useContext(UserContext)
-  const [uri, seturi] = useState('profile')
   const [loged, setLoged] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+  const handleClick = (event) => setAnchorEl(event.currentTarget)
+  const handleClose = () => setAnchorEl(null)
 
-  const handleLogout = async () => {
-    await logout()
-  }
+  const [uri, setUri] = useState('profile')
+  const { useGetData } = useContext(RequestsContext)
+  const { data, isLoading } = useGetData(uri)
 
-  const { data, isLoading, error } = useFetch(uri)
+  const handleLogout = async () => await logout()
 
   useEffect(() => {
-    if (user?.user?.hasProfile === 1 || (user && hasProfile === '1')) {
-      seturi(`profile/${user.user.id}`)
+    if (user && (user?.user?.hasProfile === 1 || hasProfile === true)) {
+      setUri(`profile/${user.user.id}`)
       setLoged(true)
     }
   }, [user, hasProfile])
@@ -52,9 +47,7 @@ const HeaderMenu = () => {
   if (loged && user) {
     return (
       <>
-        {error ? (
-          <span>Une erreur s'est produite</span>
-        ) : isLoading ? (
+        {isLoading ? (
           <Loader
             style={{
               margin: 'initial',

@@ -7,107 +7,88 @@ import {
 import React, { useContext, useState, useEffect } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
-import { UserContext } from '../../utils/context/UserContext'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './CreatePost.scss'
 import PostForm from '../PostForm/PostForm'
 import { postValidation } from '../../utils/validators'
+import { RequestsContext } from '../../utils/context/RequestsContext'
 
 function CreatePost() {
-  const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
-
   const { data, setData } = useContext(PostsContext)
-
   const [inputs, setInputs] = useState({
     text: '',
     file: '',
     urlForPreview: null,
   })
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
-
   //Accordion state
   const [expanded, setExpanded] = useState(false)
+  const {
+    requestData,
+    requestError,
+    setRequestError,
+    isLoading,
+    makeRequest,
+    setRequestData,
+  } = useContext(RequestsContext)
+
+  //if get a new post from request, updateDom and clean context
   useEffect(() => {
-    if (!expanded)
-      return () =>
-        setInputs({
-          text: '',
-          file: '',
-          urlForPreview: null,
-        })
-  }, [expanded])
+    const updateData = (post) => {
+      const oldArray = [...data]
+      oldArray.unshift(post)
+      setData(oldArray)
+    }
+    requestData?.newPost && updateData(requestData.newPost)
+    return () => setRequestData('')
+  }, [requestData, setRequestData, data, setData])
+
+  //catch request errors and use it
+  useEffect(() => {
+    if (expanded && requestError) {
+      setError(requestError)
+    }
+    return () => {
+      setRequestError(undefined)
+      setError(requestError)
+    }
+  }, [expanded, requestError, setRequestError])
 
   const handleChangeAccordion = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false)
   }
 
-  //will update posts data array to render the post without any request
-  const updateData = (post) => {
-    const oldArray = [...data]
-    oldArray.unshift(post)
-    setData(oldArray)
+  const validation = (inputs) => {
+    const formError = postValidation(inputs)
+    setError(formError.text)
+    if (formError.text) {
+      throw new Error(formError.text)
+    }
   }
 
   const handleSubmit = async (e) => {
-    setLoading(true)
     try {
       e.preventDefault()
-      const formError = postValidation(inputs)
-      setError(formError.text)
-      if (formError.text) {
-        return setAlertStates({
-          open: true,
-          type: 'error',
-          message: formError.text,
-        })
-      }
+
+      validation(inputs)
 
       const data = new FormData()
       data.append('file', inputs.file)
       data.append('text', inputs.text)
 
-      const response = await fetch(
-        `${process.env.REACT_APP_LOCALIP_URL_API}posts/upload`,
-        {
-          method: 'POST',
-          body: data,
-          headers: {
-            Authorization: `Bearer ${user.user.token}`,
-          },
-        }
-      )
-      const parsedRespose = await response.json()
-      if (response.ok) {
-        updateData(parsedRespose.post)
-        setInputs({
-          text: '',
-          file: '',
-          urlForPreview: null,
-        })
-        setAlertStates({
-          open: true,
-          type: 'success',
-          message: 'Publication enregistrée !',
-        })
-      } else {
-        setAlertStates({
-          open: true,
-          type: 'error',
-          message: `${parsedRespose.message}`,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      setError(error.message)
+      const method = 'post'
+      const url = 'posts/upload'
+      await makeRequest(method, url, data)
+
+      setInputs({ text: '', file: '', urlForPreview: null })
       setAlertStates({
         open: true,
-        type: 'error',
-        message: { error },
+        type: 'success',
+        message: 'Publication enregistrée !',
       })
-    } finally {
-      setLoading(false)
+    } catch (err) {
+      setAlertStates({ open: true, type: 'error', message: `${err}` })
     }
   }
 
@@ -135,7 +116,7 @@ function CreatePost() {
             setInputs={setInputs}
             error={error}
             handleSubmit={handleSubmit}
-            loading={loading}
+            loading={isLoading}
           />
         </AccordionDetails>
       </Accordion>

@@ -5,12 +5,12 @@ import { UserContext } from '../context/UserContext'
 
 const useSecureAxios = () => {
   const refresh = useRefreshToken()
-  const { user } = useContext(UserContext)
+  const { user, setHasProfile } = useContext(UserContext)
 
   useEffect(() => {
     const reqInterceptor = secureAxios.interceptors.request.use(
       (config) => {
-        if (!config.headers['Authorization']) {
+        if (user && !config.headers['Authorization']) {
           config.headers['Authorization'] = `Bearer ${user?.user?.token}`
         }
         return config
@@ -21,14 +21,21 @@ const useSecureAxios = () => {
     )
 
     const resInterceptor = secureAxios.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        if (response?.data?.message === 'Profil sauvegardé') {
+          setHasProfile(true)
+        }
+        return response
+      },
       async (error) => {
         const initialRequest = error?.config
-        if (error?.response.status === 401 && !initialRequest?.retry) {
-          initialRequest.retry = true
-          const newToken = await refresh()
-          initialRequest.headers['Authorization'] = `Bearer ${newToken}`
-          return secureAxios(initialRequest)
+        if (user) {
+          if (error?.response.status === 401 && !initialRequest?.retry) {
+            initialRequest.retry = true
+            const newToken = await refresh()
+            initialRequest.headers['Authorization'] = `Bearer ${newToken}`
+            return secureAxios(initialRequest)
+          }
         }
         return Promise.reject(error)
       }
