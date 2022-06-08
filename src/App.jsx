@@ -12,12 +12,15 @@ import FeedBackAlert from './components/Alert/TestAlert'
 import { Themes } from './styles/themes'
 import PersitSession from './auth/PersitSession'
 import OtherUserPosts from './components/OtherUserPosts/OtherUserPosts'
+import ScrollTopBtn from './components/ScrollTopBtn/ScrollTopBtn'
 
 function App() {
   return (
     <ThemeProvider theme={Themes.customTheme()}>
       <BrowserRouter>
         <CssBaseline />
+        <ScrollTopBtn />
+
         <Header />
         <FeedBackAlert />
 

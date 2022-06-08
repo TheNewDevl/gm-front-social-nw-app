@@ -99,11 +99,7 @@ function Comments({ comments, setDataComment, post }) {
   }
 
   return (
-    <Box
-      maxHeight="50vh"
-      sx={{ overflowY: 'scroll', scrollBehavior: 'smooth' }}
-      id="comments__Container"
-    >
+    <Box maxHeight="50vh" sx={{ overflowY: 'scroll' }} id="comments__Container">
       {isLoading && <Loader />}
       <GetMoreComments />
       {comments &&
