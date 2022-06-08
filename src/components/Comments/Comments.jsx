@@ -80,7 +80,7 @@ function Comments({ comments, setDataComment, post }) {
           color="primary"
           component="a"
           variant="caption"
-          sx={{ display: 'block', cursor: 'pointer' }}
+          sx={{ display: 'block', cursor: 'pointer', mt: '1em' }}
           align="center"
           onClick={getComments}
         >

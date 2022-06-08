@@ -114,8 +114,6 @@ export default function PostCard({ post }) {
         </ExpandMore>
       </CardActions>
 
-      <Divider />
-
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Comments
           comments={dataComment}

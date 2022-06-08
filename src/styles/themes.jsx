@@ -31,19 +31,20 @@ export const Themes = {
           : {
               /** PALETTE VALUES FOR THE DARK MODE  */
               primary: {
-                main: '#5893df',
+                main: '#00ADB5',
               },
               secondary: {
-                main: '#2ec5d3',
+                main: '#EEEEEE',
               },
               background: {
-                default: '#192231',
-                paper: '#24344d',
+                default: '#000',
+                paper: '#393E46',
               },
+              divider: '#EEEEEE',
             }),
       },
       shape: {
-        borderRadius: 20,
+        borderRadius: 10,
       },
       footerShadow:
         '0px -2px 4px -1px rgb(0 0 0 / 20%),0px -4px 5px 0px rgb(0 0 0 / 14%), 0px -1px 10px 0px rgb(0 0 0 / 12%)',
