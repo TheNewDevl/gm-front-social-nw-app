@@ -10,13 +10,14 @@ import PropTypes from 'prop-types'
 function PostsDisplay({ id }) {
   const { noContent, setNoContent, data, setData, error, isLoading } =
     useContext(PostsContext)
-  console.log(id)
+
   const loadPosts = useLoadPosts(id)
 
   const handleScroll = async (e) => {
     if (
       window.innerHeight + e.target.documentElement.scrollTop >=
-      e.target.documentElement.scrollHeight // at the bottem => need
+      e.target.documentElement.scrollHeight
+      // at the bottem => need
     ) {
       await loadPosts()
     }
@@ -25,7 +26,9 @@ function PostsDisplay({ id }) {
   //infinite scroll
   useEffect(() => {
     loadPosts()
-    window.addEventListener('scroll', handleScroll)
+    setTimeout(() => {
+      !isLoading && window.addEventListener('scroll', handleScroll)
+    }, 1000)
 
     return () => {
       window.removeEventListener('scroll', handleScroll)

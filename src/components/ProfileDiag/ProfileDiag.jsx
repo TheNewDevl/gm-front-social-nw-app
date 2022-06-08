@@ -8,9 +8,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import DataTable from '../DataTable/DataTable'
 import timeManagement from '../../utils/time-management'
-import { Avatar, Divider } from '@mui/material'
+import { Avatar, Button } from '@mui/material'
 import Loader from '../Loader/Loader'
 import { RequestsContext } from '../../utils/context/RequestsContext'
+import { useNavigate } from 'react-router-dom'
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />
@@ -36,7 +37,12 @@ export default function ProfilesDiag({ open, handleClose, userId }) {
       ])
     }
   }, [data])
-  console.log(data)
+
+  const navigate = useNavigate()
+  const handleRedirection = (e) => {
+    navigate(`/publications/${userId}/${data.user.username}`, { replace: true })
+  }
+
   if (data)
     return (
       <div>
@@ -77,22 +83,25 @@ export default function ProfilesDiag({ open, handleClose, userId }) {
               Une erreur s'est produite
             </Typography>
           )}
-          {profileInfos && data.photo && (
-            <Avatar
-              sx={{
-                margin: '1em auto',
-                width: 200,
-                height: 200,
-              }}
-              src={data.photo}
-              alt={`photo de profil de ${data.user.username}`}
-            />
-          )}
+          <Avatar
+            sx={{
+              margin: '1em auto',
+              width: 200,
+              height: 200,
+            }}
+            src={data.photo && data.photo}
+            alt={`photo de profil de ${data.user.username}`}
+          />
+
           {profileInfos && <DataTable displayData={profileInfos} />}
-          <Typography component="span" variant="subtitle1">
-            {`Consulter les publications de ${data.user.username}`}
-          </Typography>
-          <Divider sx={{ mb: '2em' }} />
+          <Button
+            onClick={handleRedirection}
+            sx={{ m: '1em' }}
+            variant="contained"
+            role="link"
+          >
+            Consulter les publications
+          </Button>
         </Dialog>
       </div>
     )

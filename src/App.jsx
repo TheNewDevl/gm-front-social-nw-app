@@ -11,6 +11,7 @@ import Footer from './components/Footer/Footer'
 import FeedBackAlert from './components/Alert/TestAlert'
 import { Themes } from './styles/themes'
 import PersitSession from './auth/PersitSession'
+import OtherUserPosts from './components/OtherUserPosts/OtherUserPosts'
 
 function App() {
   return (
@@ -27,6 +28,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/profile/" element={<Profile />} />
               <Route path="/profile/interactions" element={<Interactions />} />
+              <Route
+                path="/publications/:id/:username"
+                element={<OtherUserPosts />}
+              />
             </Route>
           </Route>
         </Routes>
