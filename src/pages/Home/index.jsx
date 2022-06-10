@@ -17,8 +17,6 @@ function Home() {
         >
           Publications
         </Typography>
-        <Divider sx={{ mb: '1.5em' }} />
-
         <CreatePost />
 
         <PostsDisplay />

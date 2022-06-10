@@ -93,10 +93,12 @@ export default function PostCard({ post }) {
       )}
 
       <CardContent>
-        <Typography whiteSpace="pre-wrap" variant="body1" color="text.">
+        <Typography whiteSpace="pre-wrap" variant="body1">
           {post.text}
         </Typography>
       </CardContent>
+      <Divider />
+
       <CardActions disableSpacing>
         <LikesManagement post={post} />
         <CommentsCounter
@@ -115,6 +117,8 @@ export default function PostCard({ post }) {
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Divider />
+
         <Comments
           comments={dataComment}
           setDataComment={setDataComment}

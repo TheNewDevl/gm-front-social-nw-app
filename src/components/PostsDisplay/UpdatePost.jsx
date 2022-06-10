@@ -109,7 +109,11 @@ function UpdatePost({ post }) {
           <EditIcon />
         </IconButton>
         <div>
-          <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <Dialog
+            fullWidth
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+          >
             <DialogTitle>Modification du post</DialogTitle>
             <DialogContent>
               <PostForm

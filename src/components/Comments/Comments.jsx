@@ -4,6 +4,7 @@ import Loader from '../Loader/Loader'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { RequestsContext } from '../../utils/context/RequestsContext'
 import { AlertContext } from '../../utils/context/AlertContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 export const defaultScroll = () => {
   const commentsContainer = document.querySelector('#comments__Container')
@@ -11,20 +12,12 @@ export const defaultScroll = () => {
 }
 
 function Comments({ comments, setDataComment, post }) {
-  const {
-    isLoading,
-    requestData,
-    setRequestData,
-    requestError,
-    setRequestError,
-    makeRequest,
-  } = useContext(RequestsContext)
   const { setAlertStates } = useContext(AlertContext)
   const [error, setError] = useState()
+  const [isLoading, setIsLoading] = useState(false)
   const queryComRefs = useRef({
     limit: 5,
     offset: 0,
-    count: 0,
   })
 
   //to auto scroll when create new comments or open component
@@ -32,27 +25,32 @@ function Comments({ comments, setDataComment, post }) {
     defaultScroll()
   }, [comments])
 
+  const uri = `comment/post/${post.id}/?limit=${queryComRefs.current.limit}&offset=${queryComRefs.current.offset}`
+  const secureAxios = useSecureAxios()
+
   //API request
   const getComments = async () => {
     try {
-      const uri = `comment/post/${post.id}/?limit=${queryComRefs.current.limit}&offset=${queryComRefs.current.offset}`
-      const method = 'get'
-      await makeRequest(method, uri)
+      setIsLoading(true)
+      const response = await secureAxios.get(uri)
+      setDataComment((data) => [
+        ...response.data.comments[0].reverse(),
+        ...data,
+      ])
+      queryComRefs.current.count = response.data.comments[1]
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     } finally {
       queryComRefs.current.offset += queryComRefs.current.limit
+      setIsLoading(false)
     }
   }
-
-  //catch request data
-  useEffect(() => {
-    if (requestData && requestData.comments) {
-      setDataComment((data) => [...requestData.comments[0].reverse(), ...data])
-      queryComRefs.current.count = requestData.comments[1]
-    }
-    return () => setRequestData('')
-  }, [requestData, setRequestData, queryComRefs, setDataComment])
 
   //get comments
   useEffect(() => {
@@ -64,9 +62,10 @@ function Comments({ comments, setDataComment, post }) {
 
   //catch request errors and use it
   useEffect(() => {
-    requestError && setError(requestError)
-    return () => setRequestError('')
-  }, [requestError, setRequestError])
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   // display 'afficher plus' only if there are more comments to display
   const GetMoreComments = () => {
@@ -90,6 +89,21 @@ function Comments({ comments, setDataComment, post }) {
     }
   }
 
+  const NoComments = () => {
+    if (queryComRefs.current.count === 0) {
+      return (
+        <Typography
+          color="primary"
+          align="center"
+          variant="subtitle1"
+          component="p"
+        >
+          Soyez le premier à commenter cette publication !
+        </Typography>
+      )
+    }
+  }
+
   if (error) {
     return (
       <Typography componenent="div" variant="subtitle2" color="error">
@@ -99,20 +113,27 @@ function Comments({ comments, setDataComment, post }) {
   }
 
   return (
-    <Box maxHeight="50vh" sx={{ overflowY: 'scroll' }} id="comments__Container">
-      {isLoading && <Loader />}
+    <>
       <GetMoreComments />
-      {comments &&
-        comments.map((comment) => (
-          <div key={comment.id}>
-            <CommentCard
-              comments={comments}
-              setDataComment={setDataComment}
-              comment={comment}
-            />
-          </div>
-        ))}
-    </Box>
+      <Box
+        maxHeight="50vh"
+        sx={{ overflowY: 'scroll', mt: 2 }}
+        id="comments__Container"
+      >
+        {isLoading && <Loader />}
+        <NoComments />
+        {comments &&
+          comments.map((comment) => (
+            <div key={comment.id}>
+              <CommentCard
+                comments={comments}
+                setDataComment={setDataComment}
+                comment={comment}
+              />
+            </div>
+          ))}
+      </Box>
+    </>
   )
 }
 
