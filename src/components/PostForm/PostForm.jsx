@@ -7,7 +7,6 @@ import {
   CardMedia,
   Box,
 } from '@mui/material'
-import React from 'react'
 import { PhotoCamera } from '@mui/icons-material'
 import SendIcon from '@mui/icons-material/Send'
 
@@ -42,9 +41,9 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
           <CardMedia
             component="img"
             image={inputs.urlForPreview}
-            alt="Paella dish"
+            src={inputs.urlForPreview}
+            alt="Illustration du post"
           />
-          <CardMedia image={inputs.urlForPreview} src={inputs.urlForPreview} />
         </Box>
       )
     }
