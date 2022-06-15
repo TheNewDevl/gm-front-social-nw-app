@@ -11,32 +11,16 @@ import { useContext, useEffect, useState } from 'react'
 import { PostsContext } from '../../utils/context/PostsContext'
 import { AlertContext } from '../../utils/context/AlertContext'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { RequestsContext } from '../../utils/context/RequestsContext'
 import { UserContext } from '../../utils/context/UserContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function DeletePost({ post }) {
   const { data, setData } = useContext(PostsContext)
   const { setAlertStates } = useContext(AlertContext)
   const [openPopUp, setOpenPopUp] = useState(false)
   const { user } = useContext(UserContext)
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
-
-  //if get a new post from request, updateDom and clean context
-  useEffect(() => {
-    if (requestData && requestData.messsage === 'Publication supprimée !') {
-      setRequestData('')
-    }
-  }, [requestData, setRequestData, data, setData])
-  //clean error context
-  useEffect(() => {
-    requestError && setRequestError(undefined)
-  }, [requestError, setRequestError])
+  const [error, setError] = useState()
+  const secureAxios = useSecureAxios()
 
   //Update data state to delete the post from the DOM
   const updateDom = () => {
@@ -48,7 +32,7 @@ function DeletePost({ post }) {
   const handleDelete = async (e) => {
     try {
       e.preventDefault()
-      await makeRequest('delete', `posts/${post.id}`)
+      await secureAxios.delete(`posts/${post.id}`)
       setAlertStates({
         open: true,
         type: 'success',
@@ -56,9 +40,21 @@ function DeletePost({ post }) {
       })
       updateDom()
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     }
   }
+
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   if (user.user.id === post.user.id || user.user.roles === 'admin') {
     return (

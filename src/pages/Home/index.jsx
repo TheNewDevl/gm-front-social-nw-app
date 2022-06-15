@@ -1,11 +1,11 @@
-import { Divider, Grid, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import CreatePost from '../../components/CreatePost/CreatePost'
 import PostsDisplay from '../../components/PostsDisplay/PostsDisplay'
-import './Home.scss'
+import Main from '../../Layout/Main'
 
 function Home() {
   return (
-    <main className="main">
+    <Main>
       <Grid>
         <Typography
           component="h1"
@@ -21,7 +21,7 @@ function Home() {
 
         <PostsDisplay />
       </Grid>
-    </main>
+    </Main>
   )
 }
 

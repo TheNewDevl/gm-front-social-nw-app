@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import PostsDisplay from '../../components/PostsDisplay/PostsDisplay'
 import { PostsContext } from '../../utils/context/PostsContext'
+import Main from '../../Layout/Main'
 
 function OtherUserPosts() {
   const { id, username } = useParams()
@@ -13,7 +14,7 @@ function OtherUserPosts() {
   }, [])
 
   return (
-    <main className="main">
+    <Main>
       <div>
         <Typography
           component="h1"
@@ -29,7 +30,7 @@ function OtherUserPosts() {
         <Divider sx={{ mb: '2em' }} />
         <PostsDisplay id={id} />
       </div>
-    </main>
+    </Main>
   )
 }
 export default OtherUserPosts

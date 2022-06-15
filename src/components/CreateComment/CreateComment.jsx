@@ -2,41 +2,13 @@ import { useContext, useEffect, useState } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { isNotEmpty } from 'class-validator'
 import CommentForm from '../Comments/CommentForm'
-import { RequestsContext } from '../../utils/context/RequestsContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function CreateComment({ post, dataComment, setDataComment }) {
   const { setAlertStates } = useContext(AlertContext)
   const [input, setInput] = useState()
   const [error, setError] = useState('')
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
-
-  useEffect(() => {
-    //will update comments state array to render the new comment
-    const updateDom = (newComment) => {
-      const oldArray = [...dataComment]
-      oldArray.push(newComment)
-      setDataComment(oldArray)
-      post.commentsCount += 1
-    }
-
-    if (requestData?.newComment) {
-      updateDom(requestData.newComment)
-    }
-
-    return () => setRequestData('')
-  }, [requestData, setRequestData, dataComment, post, setDataComment])
-
-  //catch request errors and use it
-  useEffect(() => {
-    requestError && setError(requestError)
-    return () => setRequestError('')
-  }, [requestError, setRequestError])
+  const secureAxios = useSecureAxios()
 
   const validation = (input) => {
     if (!input || !isNotEmpty(input)) {
@@ -47,6 +19,14 @@ function CreateComment({ post, dataComment, setDataComment }) {
     }
   }
 
+  //will update comments state array to render the new comment
+  const updateDom = (newComment) => {
+    const oldArray = [...dataComment]
+    oldArray.push(newComment)
+    setDataComment(oldArray)
+    post.commentsCount += 1
+  }
+
   //post Request
   const handleSubmit = async (e) => {
     try {
@@ -54,15 +34,29 @@ function CreateComment({ post, dataComment, setDataComment }) {
       validation(input)
 
       const uri = 'comment'
-      const method = 'post'
       const data = { postId: post.id, text: input }
-      await makeRequest(method, uri, data)
-      setInput('')
+      const comment = await secureAxios.post(uri, data)
+
       setAlertStates({ open: true, type: 'success', message: 'Enregistré !' })
+      updateDom(comment.data)
+      setInput('')
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     }
   }
+
+  //catch request errors and use it
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   return (
     <>

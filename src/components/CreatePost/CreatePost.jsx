@@ -8,10 +8,9 @@ import React, { useContext, useState, useEffect } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import './CreatePost.scss'
 import PostForm from '../PostForm/PostForm'
 import { postValidation } from '../../utils/validators'
-import { RequestsContext } from '../../utils/context/RequestsContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function CreatePost() {
   const { setAlertStates } = useContext(AlertContext)
@@ -22,41 +21,19 @@ function CreatePost() {
     urlForPreview: null,
   })
   const [error, setError] = useState()
+  const [isLoading, setIsLoading] = useState(false)
+  const secureAxios = useSecureAxios()
+
   //Accordion state
   const [expanded, setExpanded] = useState(false)
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    isLoading,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
-
-  //if get a new post from request, updateDom and clean context
-  useEffect(() => {
-    const updateData = (post) => {
-      const oldArray = [...data]
-      oldArray.unshift(post)
-      setData(oldArray)
-    }
-    requestData?.newPost && updateData(requestData.newPost)
-    return () => setRequestData('')
-  }, [requestData, setRequestData, data, setData])
-
-  //catch request errors and use it
-  useEffect(() => {
-    if (expanded && requestError) {
-      setError(requestError)
-    }
-    return () => {
-      setRequestError(undefined)
-      setError(requestError)
-    }
-  }, [expanded, requestError, setRequestError])
-
   const handleChangeAccordion = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false)
+  }
+
+  const updateData = (post) => {
+    const oldArray = [...data]
+    oldArray.unshift(post)
+    setData(oldArray)
   }
 
   const validation = (inputs) => {
@@ -69,6 +46,7 @@ function CreatePost() {
 
   const handleSubmit = async (e) => {
     try {
+      setIsLoading(true)
       e.preventDefault()
 
       validation(inputs)
@@ -77,25 +55,40 @@ function CreatePost() {
       data.append('file', inputs.file)
       data.append('text', inputs.text)
 
-      const method = 'post'
       const url = 'posts/upload'
-      await makeRequest(method, url, data)
+      const response = await secureAxios.post(url, data)
 
-      setInputs({ text: '', file: '', urlForPreview: null })
       setAlertStates({
         open: true,
         type: 'success',
         message: 'Publication enregistrée !',
       })
+      setInputs({ text: '', file: '', urlForPreview: null })
+      updateData(response.data.post)
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
+
+  //catch request errors and use it
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   return (
     <>
       <Accordion
-        className="accordion"
+        sx={{ mb: '2em' }}
         expanded={expanded === 'panel1'}
         onChange={handleChangeAccordion('panel1')}
       >
@@ -110,7 +103,7 @@ function CreatePost() {
           </Button>
         </AccordionSummary>
 
-        <AccordionDetails className="accordion__content">
+        <AccordionDetails sx={{ mr: '24px' }}>
           <PostForm
             inputs={inputs}
             setInputs={setInputs}

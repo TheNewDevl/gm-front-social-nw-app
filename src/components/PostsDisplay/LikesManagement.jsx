@@ -1,24 +1,18 @@
 import FavoriteIcon from '@mui/icons-material/Favorite'
-import { IconButton } from '@mui/material'
+import { IconButton, Typography } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
-import { RequestsContext } from '../../utils/context/RequestsContext'
 import { UserContext } from '../../utils/context/UserContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function LikesManagement({ post }) {
   const { data, setData } = useContext(PostsContext)
   const { user } = useContext(UserContext)
   const { setAlertStates } = useContext(AlertContext)
   const [likesCount, setLikesCount] = useState(0)
-
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    setRequestData,
-    makeRequest,
-  } = useContext(RequestsContext)
+  const secureAxios = useSecureAxios()
+  const [error, setError] = useState()
 
   //display number of likes per post
   useEffect(() => {
@@ -54,24 +48,29 @@ function LikesManagement({ post }) {
     setData(oldData)
   }
 
-  //clean request errors
-  useEffect(() => {
-    requestData?.message === 'Like enregistré' && setRequestData('')
-    requestData?.message === 'Like supprimé' && setRequestData('')
-    requestError && setRequestError(undefined)
-  }, [requestData, setRequestData, requestError, setRequestError])
-
   const handleLike = async () => {
     const body = post.likes.find((p) => p.id === user.user.id)
       ? { like: 'unlike' }
       : { like: 'like' }
     try {
-      await makeRequest('patch', `posts/likes/${post.id}`, body)
+      await secureAxios.patch(`posts/likes/${post.id}`, body)
       updateDom(body.like)
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     }
   }
+
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   return (
     <>
@@ -79,7 +78,15 @@ function LikesManagement({ post }) {
         <FavoriteIcon
           color={post.likes.find((p) => p.id === user.user.id) && 'error'}
         />
-        <span className="likesCount">{likesCount}</span>
+        <Typography
+          component="span"
+          fontWeight="700"
+          fontSize="0.9em"
+          marginLeft="5px"
+          marginRight="15px"
+        >
+          {likesCount}
+        </Typography>
       </IconButton>
     </>
   )

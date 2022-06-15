@@ -17,6 +17,7 @@ import { useTheme } from '@mui/material'
 import { AuthInterceptors } from '../../interceptors/AuthInterceptors'
 import { profileValidation } from '../../utils/validators'
 import { RequestsContext } from '../../utils/context/RequestsContext'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function ProfileForm({ method }) {
   const theme = useTheme()
@@ -37,13 +38,7 @@ function ProfileForm({ method }) {
   const uri = method === 'POST' ? 'profile' : `profile/${profileId}`
 
   const { useGetData } = useContext(RequestsContext)
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
+  const secureAxios = useSecureAxios()
 
   //if the profile has already been created, the fields are pre-filled with the profile data
   const { data, isLoading } = useGetData(`profile/${user.user.id}`)
@@ -57,15 +52,6 @@ function ProfileForm({ method }) {
       setProfileId(data.id)
     }
   }, [data])
-
-  //clean request states
-  useEffect(() => {
-    return () => {
-      setError(requestError)
-      setRequestData('')
-      setRequestError(undefined)
-    }
-  }, [requestData, requestError, setRequestData, setRequestError])
 
   //set input values to credentials state
   const handleValues = (e) => {
@@ -105,23 +91,38 @@ function ProfileForm({ method }) {
       data.append('bio', profileInputs.bio)
 
       try {
-        await makeRequest(method.toLowerCase(), uri, data)
+        method === 'POST'
+          ? await secureAxios.post(uri, data)
+          : await secureAxios.patch(uri, data)
         setAlertStates({
           open: true,
           type: 'success',
           message: 'Modifications enregistrées !',
         })
       } catch (err) {
-        setAlertStates({ open: true, type: 'error', message: `${err}` })
+        if (err?.response?.data?.message) {
+          setError(err.response.data.message)
+        } else if (err?.request) {
+          setError('Pas de réponse du serveur')
+        } else {
+          setError(err.message)
+        }
       }
     }
   }
+
+  //catch request errors and use it
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   return (
     <>
       <AuthInterceptors />
       {isLoading ? (
-        <Loader />
+        <Loader style={{ marginTop: '5em' }} />
       ) : (
         <Box component="form" onSubmit={handleSubmit}>
           {data || file.urlForPreview ? (

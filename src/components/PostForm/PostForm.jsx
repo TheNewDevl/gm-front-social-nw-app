@@ -5,6 +5,7 @@ import {
   CircularProgress,
   TextField,
   CardMedia,
+  Box,
 } from '@mui/material'
 import React from 'react'
 import { PhotoCamera } from '@mui/icons-material'
@@ -31,16 +32,20 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
   const ImgPreview = () => {
     if (inputs.urlForPreview) {
       return (
-        <div className="img_container">
+        <Box
+          width="100%"
+          maxHeight="40vh"
+          margin="1em auto"
+          display="flex"
+          className="img_container"
+        >
           <CardMedia
             component="img"
             image={inputs.urlForPreview}
             alt="Paella dish"
           />
           <CardMedia image={inputs.urlForPreview} src={inputs.urlForPreview} />
-
-          {/*  <img src={inputs.urlForPreview} alt="preview" /> */}
-        </div>
+        </Box>
       )
     }
   }

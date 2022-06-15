@@ -3,6 +3,7 @@ import ProfileForm from '../../components/ProfileForm/ProfileForm'
 import { UserContext } from '../../utils/context/UserContext'
 import { useContext, useState } from 'react'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
+import Main from '../../Layout/Main'
 
 function Account() {
   const { user } = useContext(UserContext)
@@ -13,9 +14,7 @@ function Account() {
   }
 
   return (
-    <main className="main">
-      {/*  <MainTitle>Mon Profil</MainTitle> */}
-
+    <Main>
       <ToggleButtonGroup color="primary" fullWidth value={display} exclusive>
         <ToggleButton onClick={handleClick} size="large" value="profile">
           Mon profil
@@ -30,7 +29,7 @@ function Account() {
       ) : (
         <AccountDetails />
       )}
-    </main>
+    </Main>
   )
 }
 

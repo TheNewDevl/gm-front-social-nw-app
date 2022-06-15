@@ -1,5 +1,11 @@
-import { Button, CircularProgress } from '@mui/material'
-import './PopUp.scss'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 function PopUp({
   passiveAction,
@@ -8,16 +14,43 @@ function PopUp({
   loading,
   activeAction,
 }) {
+  const theme = useTheme()
+
   return (
-    <div onClick={passiveAction} className="popUp__container">
-      <div
+    <Box
+      onClick={passiveAction}
+      bgcolor="rgb(0, 0, 0, 0.4)"
+      position="fixed"
+      width="100vw"
+      height="100vh"
+      top="0"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Box
         onClick={(e) => {
           e.stopPropagation()
         }}
-        className="popUp"
+        bgcolor={theme.palette.background.paper}
+        borderRadius="20px"
+        width="80%"
+        padding="2em"
       >
-        <p className="popUp__text">{popUpMsg}</p>
-        <div className="popUp__btns">
+        <Typography
+          component="p"
+          fontSize="1.2em"
+          textAlign="center"
+          fontWeight="bold"
+        >
+          {popUpMsg}
+        </Typography>
+        <Stack
+          flexDirection="row"
+          justifyContent="center"
+          flexWrap="wrap"
+          gap="20px"
+        >
           <Button
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
@@ -41,9 +74,9 @@ function PopUp({
               )}
             </Button>
           )}
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Box>
+    </Box>
   )
 }
 export default PopUp

@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material'
+import { IconButton, Typography } from '@mui/material'
 import ModeCommentIcon from '@mui/icons-material/ModeComment'
 
 function CommentsCounter({ count, expendCollapse }) {
@@ -6,7 +6,15 @@ function CommentsCounter({ count, expendCollapse }) {
     <>
       <IconButton onClick={expendCollapse} aria-label="expand comments">
         <ModeCommentIcon />
-        <span className="likesCount">{count && count}</span>
+        <Typography
+          component="span"
+          fontWeight="700"
+          fontSize="0.9em"
+          marginLeft="5px"
+          marginRight="15px"
+        >
+          {count && count}
+        </Typography>
       </IconButton>
     </>
   )

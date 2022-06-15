@@ -51,7 +51,7 @@ export default function PostCard({ post }) {
   }
 
   return (
-    <Card data-id={post.id} className="post">
+    <Card data-id={post.id} sx={{ m: '1em 0' }}>
       <CardHeader
         avatar={
           <Avatar

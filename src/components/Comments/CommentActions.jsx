@@ -6,8 +6,8 @@ import { UserContext } from '../../utils/context/UserContext'
 import { DialogTitle, DialogActions, DialogContent } from '@mui/material'
 import { useEffect } from 'react'
 import CommentForm from './CommentForm'
-import { RequestsContext } from '../../utils/context/RequestsContext'
 import { isNotEmpty } from 'class-validator'
+import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 function CommentActions({ comments, setDataComment, comment, userId }) {
   const { user } = useContext(UserContext)
@@ -16,41 +16,12 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
   const [error, setError] = useState()
   const [openDialog, setOpenDialog] = useState(false)
   const [input, setInput] = useState()
-  const {
-    requestData,
-    requestError,
-    setRequestError,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
+  const secureAxios = useSecureAxios()
 
   //will display initial comment value when update
   useEffect(() => {
     if (comment) setInput(comment.text)
   }, [comment])
-
-  //catch request errors and use it
-  useEffect(() => {
-    requestError && setError(requestError)
-    return () => setRequestError('')
-  }, [requestError, setRequestError])
-
-  // will catch the updated comment and update DOM
-  useEffect(() => {
-    //update posts state to synchronize display and avoid a relaod
-    const updateDom = (updatedComment) => {
-      const oldData = [...comments]
-      //find the index of the post
-      const index = oldData.findIndex((c) => c.id === updatedComment.id)
-      oldData[index].text = updatedComment.text
-      setDataComment(oldData)
-    }
-    if (requestData?.updatedComment) {
-      updateDom(requestData.updatedComment)
-    }
-    //clean requestData
-    setRequestData('')
-  }, [requestData, comments, setDataComment, setRequestData])
 
   //input validation
   const validation = (input) => {
@@ -61,6 +32,14 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
       setError('')
     }
   }
+  //update posts state to synchronize display and avoid a relaod
+  const updateDom = (updatedComment) => {
+    const oldData = [...comments]
+    //find the index of the post
+    const index = oldData.findIndex((c) => c.id === updatedComment.id)
+    oldData[index].text = updatedComment.text
+    setDataComment(oldData)
+  }
 
   const handleUpdate = async (e) => {
     try {
@@ -68,22 +47,24 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
       validation(input)
 
       const uri = `comment/${comment.id}`
-      const method = 'patch'
       const data = { text: input }
-      await makeRequest(method, uri, data)
+      const response = await secureAxios.patch(uri, data)
 
       setAlertStates({
         open: true,
         type: 'success',
         message: 'Modification enregistrée !',
       })
+      updateDom(response.data)
       setOpenDialog(false)
     } catch (err) {
-      setAlertStates({
-        open: true,
-        type: 'error',
-        message: `${err}`,
-      })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     }
   }
 
@@ -99,18 +80,30 @@ function CommentActions({ comments, setDataComment, comment, userId }) {
   const handleDelete = async (e) => {
     try {
       const uri = `comment/${comment.id}`
-      const method = 'delete'
-      await makeRequest(method, uri)
-      deleteDom()
+      await secureAxios.delete(uri)
       setAlertStates({
         open: true,
         type: 'success',
         message: 'Commentaire supprimé !',
       })
+      deleteDom()
     } catch (err) {
-      setAlertStates({ open: true, type: 'error', message: `${err}` })
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err?.request) {
+        setError('Pas de réponse du serveur')
+      } else {
+        setError(err.message)
+      }
     }
   }
+
+  //catch request errors and use it
+  useEffect(() => {
+    if (error) {
+      setAlertStates({ open: true, type: 'error', message: `${error}` })
+    }
+  }, [error])
 
   if (user.user.id === userId || user.user.roles === 'admin') {
     return (

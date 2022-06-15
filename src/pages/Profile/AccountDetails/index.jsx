@@ -8,24 +8,19 @@ import DataTable from '../../../components/DataTable/DataTable'
 import useLogout from '../../../utils/hooks/useLogout'
 import { RequestsContext } from '../../../utils/context/RequestsContext'
 import { AlertContext } from '../../../utils/context/AlertContext'
+import useSecureAxios from '../../../utils/hooks/useSecureAxios'
 
 function AccountDetails() {
   const { user, setUser } = useContext(UserContext)
   const [deleted, setDeleted] = useState(false)
   const [deployed, setDeployed] = useState(false)
   const [displayData, setDisplayData] = useState()
-  const {
-    useGetData,
-    requestData,
-    requestError,
-    setRequestError,
-    isLoading,
-    makeRequest,
-    setRequestData,
-  } = useContext(RequestsContext)
+  const { useGetData } = useContext(RequestsContext)
   const { data, error } = useGetData(`user/${user.user.id}`)
   const { setAlertStates } = useContext(AlertContext)
   const logout = useLogout()
+  const secureAxios = useSecureAxios()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (data) {
@@ -41,12 +36,6 @@ function AccountDetails() {
     }
   }, [data])
 
-  //clean request states
-  useEffect(() => {
-    requestData?.message === 'Utilisateur supprimé !' && setRequestData('')
-    deployed && requestError && setRequestError(undefined)
-  }, [])
-
   //display error if can't get data
   if (error) return <span>{`${error}`}</span>
 
@@ -58,21 +47,24 @@ function AccountDetails() {
     await logout()
     setUser('')
   }
+
   //post request to delete the account
   const handleDelete = async (e) => {
     try {
+      setIsLoading(true)
       e.preventDefault()
-      await makeRequest('delete', `user/${user.user.id}`)
+      await secureAxios.delete(`user/${user.user.id}`)
       localStorage.clear()
       setDeleted(true)
       setDeployed(false)
     } catch (err) {
-      console.log(err)
       setAlertStates({
         open: true,
         type: 'error',
         message: `Une erreur est survenue, contactez votre administrateur`,
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 

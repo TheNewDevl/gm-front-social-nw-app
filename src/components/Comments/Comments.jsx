@@ -2,7 +2,6 @@ import CommentCard from './CommentCard'
 import { Box, Typography } from '@mui/material'
 import Loader from '../Loader/Loader'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { RequestsContext } from '../../utils/context/RequestsContext'
 import { AlertContext } from '../../utils/context/AlertContext'
 import useSecureAxios from '../../utils/hooks/useSecureAxios'
 

@@ -7,6 +7,7 @@ import {
   Divider,
 } from '@mui/material'
 import PostsDisplay from '../../components/PostsDisplay/PostsDisplay'
+import Main from '../../Layout/Main'
 
 function Interactions() {
   const { user } = useContext(UserContext)
@@ -17,7 +18,7 @@ function Interactions() {
   }
 
   return (
-    <main className="main">
+    <Main>
       <ToggleButtonGroup color="primary" fullWidth value={display} exclusive>
         <ToggleButton onClick={handleClick} size="large" value="interactions">
           Mes publications
@@ -60,7 +61,7 @@ function Interactions() {
           <p>En cours de déployement</p>
         </div>
       )}
-    </main>
+    </Main>
   )
 }
 export default Interactions
