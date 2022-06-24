@@ -60,6 +60,7 @@ const HeaderMenu = () => {
           <>
             <Box
               component="nav"
+              role="tablist"
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -77,7 +78,6 @@ const HeaderMenu = () => {
                 }}
                 to="/"
                 title="Accueil"
-                role="link"
                 label={
                   <>
                     <Typography
@@ -88,7 +88,6 @@ const HeaderMenu = () => {
                           display: 'none',
                         },
                       }}
-                      role="link"
                     >
                       Publications
                     </Typography>
@@ -111,6 +110,7 @@ const HeaderMenu = () => {
                   aria-expanded={open ? 'true' : undefined}
                 >
                   <Avatar
+                    component="span"
                     src={data && data.photo}
                     alt="Photo de profil"
                     sx={{ width: 32, height: 32 }}

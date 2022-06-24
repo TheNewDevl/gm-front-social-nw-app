@@ -11,9 +11,9 @@ import { useContext, useState, useEffect } from 'react'
 import { AlertContext } from '../../utils/context/AlertContext'
 import { PostsContext } from '../../utils/context/PostsContext'
 import { UserContext } from '../../utils/context/UserContext'
-import PostForm from '../PostForm/PostForm'
 import { postValidation } from '../../utils/validators'
 import useSecureAxios from '../../utils/hooks/useSecureAxios'
+import PostForm from '../PostForm/PostForm'
 
 function UpdatePost({ post }) {
   const { setAlertStates } = useContext(AlertContext)
@@ -121,6 +121,7 @@ function UpdatePost({ post }) {
                 error={error}
                 handleSubmit={handleSubmit}
                 loading={isLoading}
+                updateForm={true}
               />
             </DialogContent>
             <DialogActions>

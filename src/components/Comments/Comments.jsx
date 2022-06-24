@@ -6,7 +6,7 @@ import { AlertContext } from '../../utils/context/AlertContext'
 import useSecureAxios from '../../utils/hooks/useSecureAxios'
 
 export const defaultScroll = () => {
-  const commentsContainer = document.querySelector('#comments__Container')
+  const commentsContainer = document.querySelector('.comments__Container')
   commentsContainer.scrollTop = commentsContainer.scrollHeight
 }
 
@@ -117,7 +117,7 @@ function Comments({ comments, setDataComment, post }) {
       <Box
         maxHeight="50vh"
         sx={{ overflowY: 'scroll', mt: 2 }}
-        id="comments__Container"
+        className="comments__Container"
       >
         {isLoading && <Loader />}
         <NoComments />

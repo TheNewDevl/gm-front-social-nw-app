@@ -213,26 +213,27 @@ function ProfileForm({ method }) {
             }}
           >
             <label htmlFor="file">
+              <input
+                id="file"
+                accept="image/*"
+                type="file"
+                name="file"
+                onChange={handleFile}
+                hidden
+              />
               <Button
                 fullWidth
+                component="span"
                 sx={{
                   [theme.breakpoints.up('sm')]: { width: '180px' },
                 }}
                 variant="outlined"
-                component="label"
               >
                 Avatar
                 <PhotoCamera sx={{ ml: '1em' }} />
-                <input
-                  sx={{ marginTop: '1em' }}
-                  accept="image/*"
-                  type="file"
-                  name="file"
-                  onChange={handleFile}
-                  hidden
-                />
               </Button>
             </label>
+
             {file.urlForPreview && (
               <Button
                 sx={{
@@ -242,7 +243,7 @@ function ProfileForm({ method }) {
                 color="error"
                 onClick={handleDete}
               >
-                Supprimer <PhotoCamera className="upload__icon" />
+                Supprimer <PhotoCamera sx={{ ml: '1em' }} />
               </Button>
             )}
             <Button

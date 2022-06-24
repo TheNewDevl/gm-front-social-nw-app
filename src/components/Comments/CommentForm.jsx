@@ -17,7 +17,7 @@ function CreateComment({ handleSubmit, input, setInput, textError }) {
     <>
       <CardContent>
         <TextField
-          id="standard-multiline-static"
+          className="standard-multiline-static"
           name="text"
           aria-label="saisie du contenu textuel"
           label="Réagissez à cette publication ici"

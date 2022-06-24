@@ -8,7 +8,6 @@ import {
 import Paper from '@mui/material/Paper'
 
 export default function DataTable({ displayData }) {
-  console.log(displayData)
   return (
     <TableContainer sx={{ mt: '2em', minHeight: '320px' }} component={Paper}>
       <Table aria-label="profile and account details">

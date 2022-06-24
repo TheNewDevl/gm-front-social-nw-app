@@ -26,9 +26,7 @@ function CreatePost() {
 
   //Accordion state
   const [expanded, setExpanded] = useState(false)
-  const handleChangeAccordion = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false)
-  }
+  const handleExpandAccordion = () => setExpanded(!expanded)
 
   const updateData = (post) => {
     const oldArray = [...data]
@@ -64,6 +62,7 @@ function CreatePost() {
         message: 'Publication enregistrée !',
       })
       setInputs({ text: '', file: '', urlForPreview: null })
+      setExpanded(false)
       updateData(response.data.post)
     } catch (err) {
       if (err?.response?.data?.message) {
@@ -87,18 +86,27 @@ function CreatePost() {
 
   return (
     <>
-      <Accordion
-        sx={{ mb: '2em' }}
-        expanded={expanded === 'panel1'}
-        onChange={handleChangeAccordion('panel1')}
-      >
+      <Accordion sx={{ mb: '2em' }} expanded={expanded}>
         <AccordionSummary
-          className="accordion__summary"
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
-          <Button className="accordion__btn" fullWidth variant="outlined">
+          <Button
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              zIndex: '100',
+            }}
+            role="none"
+            tabIndex={null}
+            component="span"
+            variant="outlined"
+            onClick={handleExpandAccordion}
+          >
             Créer une publication
           </Button>
         </AccordionSummary>

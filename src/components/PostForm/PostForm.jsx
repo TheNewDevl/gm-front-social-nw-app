@@ -10,11 +10,18 @@ import {
 import { PhotoCamera } from '@mui/icons-material'
 import SendIcon from '@mui/icons-material/Send'
 
-function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
-  //Set states for api Request
+function PostForm({
+  inputs,
+  setInputs,
+  error,
+  handleSubmit,
+  loading,
+  updateForm,
+}) {
   const handleText = (e) => {
     setInputs({ ...inputs, text: e.target.value })
   }
+
   const handleFile = (e) => {
     setInputs({
       ...inputs,
@@ -83,19 +90,20 @@ function PostForm({ inputs, setInputs, error, handleSubmit, loading }) {
         flexWrap="wrap"
         gap={1}
       >
-        <label htmlFor="file">
-          <Button variant="outlined" component="label">
+        <label htmlFor={updateForm ? 'updateFile' : 'file'}>
+          <input
+            accept="image/*"
+            id={updateForm ? 'updateFile' : 'file'}
+            type="file"
+            onChange={handleFile}
+            hidden
+          />
+          <Button variant="outlined" component="span">
             Image
             <PhotoCamera sx={{ ml: '1em' }} />
-            <input
-              accept="image/*"
-              id="file"
-              type="file"
-              onChange={handleFile}
-              hidden
-            />
           </Button>
         </label>
+
         {inputs.urlForPreview && (
           <Button variant="outlined" color="error" onClick={handleDete}>
             Supprimer
