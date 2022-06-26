@@ -83,6 +83,16 @@ export default function ProfilesDiag({ open, handleClose, userId }) {
               Une erreur s'est produite
             </Typography>
           )}
+          <Typography
+            component="h1"
+            variant="overline"
+            fontSize="1.5em"
+            fontWeight="900"
+            textAlign="center"
+            color="primary"
+          >
+            {data.user.username}
+          </Typography>
           <Avatar
             sx={{
               margin: '1em auto',

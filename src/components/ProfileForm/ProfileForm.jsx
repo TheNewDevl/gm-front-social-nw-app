@@ -178,7 +178,6 @@ function ProfileForm({ method }) {
           {/* BIO */}
           <TextField
             id="standard-multiline-static"
-            aria-label="A propos de vous"
             label={`Quelques mots à propos de vous `}
             name="bio"
             required

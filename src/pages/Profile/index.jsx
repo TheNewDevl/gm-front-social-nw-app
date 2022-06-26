@@ -2,7 +2,7 @@ import AccountDetails from './AccountDetails'
 import ProfileForm from '../../components/ProfileForm/ProfileForm'
 import { UserContext } from '../../utils/context/UserContext'
 import { useContext, useState } from 'react'
-import { ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import Main from '../../Layout/Main'
 
 function Account() {
@@ -23,6 +23,18 @@ function Account() {
           Mon compte
         </ToggleButton>
       </ToggleButtonGroup>
+      <Typography
+        component="h1"
+        variant="overline"
+        fontSize="1.5em"
+        fontWeight="900"
+        textAlign="center"
+        color="primary"
+      >
+        {display === 'profile'
+          ? 'Mon Profil'
+          : display === 'account' && 'Mon compte'}
+      </Typography>
 
       {display === 'profile' ? (
         <ProfileForm method="PATCH" uri={user.user.id} />

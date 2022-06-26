@@ -19,7 +19,6 @@ function CreateComment({ handleSubmit, input, setInput, textError }) {
         <TextField
           className="standard-multiline-static"
           name="text"
-          aria-label="saisie du contenu textuel"
           label="Réagissez à cette publication ici"
           required
           fullWidth

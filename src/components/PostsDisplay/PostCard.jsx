@@ -51,13 +51,17 @@ export default function PostCard({ post }) {
   }
 
   return (
-    <Card data-id={post.id} sx={{ m: '1em 0' }}>
+    <Card
+      component="article"
+      data-id={post.id}
+      sx={{ m: '1em 0' }}
+      aria-label="Publication"
+    >
       <CardHeader
         avatar={
           <Avatar
             src={post.user.profile && post.user.profile.photo}
             alt={`Photo de profil de ${post.user.username}`}
-            aria-label="post"
           />
         }
         action={

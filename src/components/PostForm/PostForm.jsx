@@ -64,7 +64,6 @@ function PostForm({
         minRows={5}
         maxRows={10}
         name="text"
-        aria-label="saisie du contenu textuel"
         type="text"
         value={inputs.text}
         onChange={handleText}
