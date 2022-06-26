@@ -1,10 +1,6 @@
 const config = {
   get BASE_URL() {
-    if (process.env.NODE_ENV === 'development') {
-      return this.getKey('REACT_APP_LOCALIP_URL_API')
-    } else {
-      return this.getKey('REACT_APP_API_BASEURL_PROD')
-    }
+    return this.getKey('REACT_APP_BASE_URL_API')
   },
 
   getKey(key) {
